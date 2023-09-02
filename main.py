@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 #Initialize pygame
 pygame.init()
@@ -16,21 +17,37 @@ playerX = (800-64)/2
 playerY = 600-64-30
 playerX_change = 0
 playerY_change = 0
+crashed = False
 
 enemyImg = pygame.image.load("assets/alien.png")
 enemies = []
 destroyed = True
 last_spawn_time = 0
-spawn_delay = 2000
+spawn_delay = 5000
 
 bulletImg = pygame.image.load("assets/bullet.png")
 fire = False
-fire_delay = 200
+fire_delay = 100
 bullets = []
 last_shot_time = 0
 
+slimeImg = pygame.image.load("assets/slime.png")
+slimes = []
+
+gameoverImg = pygame.image.load("assets/gameover.png")
+
 def player(x, y):
     screen.blit(playerImg, (x, y))
+
+def gameover():
+    global fire, playerX, playerY
+    screen.blit(gameoverImg, ((800-600)/2, (600-309)/2))
+    enemies.clear()
+    fire = False
+    screen.blit(text_surface,text_rect.topleft)
+    playerX = (800-64)/2
+    playerY = 600-64-30
+    slimes.clear()
     
 class Enemy:
     def __init__(self):
@@ -38,9 +55,12 @@ class Enemy:
         self.y = random.randint(30, 300-64-30)
         self.x_change = 0.3
         self.y_change = 40
+        self.last_slime_time = 0
+        self.spawn_time = 0
 
     def spawn(self):
         screen.blit(enemyImg, (self.x, self.y))
+        self.move()
 
     def move(self):
         self.x += self.x_change
@@ -54,17 +74,24 @@ class Enemy:
             self.x_change = -0.3
 
 class Bullet:
-    def __init__(self, x, y):
+    def __init__(self, x, y, speed):
         self.x = x
         self.y = y
-        self.speed = 5
+        self.speed = speed
 
-    def fire_bullet(self):
-        screen.blit(bulletImg, (self.x+32-12, self.y-15))
+    def fire_bullet(self, image):
+        screen.blit(image, (self.x+32-12, self.y-15))
 
-    def move(self):
+    def move_bullet(self):
         self.y -= self.speed
 
+    def move_slime(self):
+        self.y += self.speed
+
+font = pygame.font.Font(None, 36)
+text_surface = font.render("Press Spacebar to Play Again!", True, (255,255,255))
+text_rect = text_surface.get_rect()
+text_rect.center = (800//2, (600//2)+200)
 
 running  = True
 while running:
@@ -85,7 +112,10 @@ while running:
             if event.key == pygame.K_DOWN:
                 playerY_change = 1
             if event.key == pygame.K_SPACE:
-                fire = True
+                if crashed:
+                    crashed = False
+                else:
+                    fire = True
 
         if event.type == pygame.KEYUP:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
@@ -100,15 +130,20 @@ while running:
     playerX += playerX_change
     playerY += playerY_change
 
-    if destroyed or ((current_time - last_spawn_time) >= spawn_delay):
+    if (destroyed or ((current_time - last_spawn_time) >= spawn_delay)) and not crashed:
         enemy_spawn = Enemy()
         enemies.append(enemy_spawn)
         destroyed = False
-        last_spawn_time = current_time
+        last_spawn_time  = current_time
+        enemy_spawn.spawn_time = current_time
 
     for enemy in enemies:
         enemy.spawn()
-        enemy.move() 
+        if (current_time - enemy.last_slime_time > 3000) and (current_time - enemy.spawn_time > 3000):
+            new_slime = Bullet(enemy.x, enemy.y, 1)
+            slimes.append(new_slime)
+            enemy.last_slime_time = current_time
+
 
     if playerX < 0:
         playerX = 0
@@ -121,23 +156,37 @@ while running:
         playerY = 600-64
 
     if fire and (current_time - last_shot_time) >= fire_delay:
-        new_bullet = Bullet(playerX, playerY)
+        new_bullet = Bullet(playerX, playerY, 5)
         bullets.append(new_bullet)
         last_shot_time = current_time
 
     for bullet in bullets:
-        bullet.fire_bullet()
-        bullet.move()
+        bullet.fire_bullet(bulletImg)
+        bullet.move_bullet()
         for enemy in enemies:
-            if ((bullet.x >= enemy.x-32 and bullet.x <= enemy.x+64-24) and (bullet.y < enemy.y+64)):
-                bullets.pop(0)
-                enemies.pop(0)
-                # destroyed = True
-            elif (bullet.y < -24):
-                try:
-                    bullets.pop(0) 
-                except IndexError:
-                    print("Popped from empty list")
+            if math.sqrt(math.pow((bullet.x-enemy.x), 2)+math.pow((bullet.y-enemy.y), 2)) < 30:
+                bullets.pop(bullets.index(bullet))
+                enemies.pop(enemies.index(enemy))
 
-    player(playerX, playerY)
+        if (bullet in bullets) and (bullet.y < 0):
+            bullets.pop(bullets.index(bullet)) 
+
+    for slime in slimes:
+        slime.fire_bullet(slimeImg)
+        slime.move_slime()
+        if (math.sqrt(math.pow((slime.x-playerX), 2)+math.pow((slime.y-playerY), 2))) < 30:
+            crashed = True
+
+        if slime.y > 600:
+            slimes.pop(slimes.index(slime))
+
+    for enemy in enemies:
+        if math.sqrt(math.pow((enemy.x-playerX), 2)+math.pow((enemy.y-playerY), 2)) < 40:
+            crashed = True
+
+    if not crashed:
+        player(playerX, playerY)
+    else:
+        gameover()
+
     pygame.display.update()
