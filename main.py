@@ -19,6 +19,7 @@ JUST_SPAWNED = True
 SPAWN_DELAY = 5000
 EXPLOSION_DELAY = 100
 CRASH_DELAY = 150
+HEALTH_BAR_DELAY = 3000
 ENEMY_COUNT = 0
 LEVEL = 1
 ENEMY_SPEED = 0.3
@@ -57,6 +58,7 @@ class Player:
         self.explosion_time = sys.float_info.min
         self.defeat_time = sys.float_info.min
         self.crash_time = sys.float_info.min
+        self.health_bar_time = sys.float_info.min
         self.width = PLAYER_WIDTH
 
     def move(self):
@@ -67,6 +69,20 @@ class Player:
 
     def draw(self):
         screen.blit(self.image, (self.x, self.y))
+    
+    def draw_health_bar(self):
+        bar_width = player.width
+        bar_height = 5
+        RED = (180, 0, 0)
+        GREEN = (0, 180, 100)
+        if self.health < 30:
+            COLOR = RED
+        else:
+            COLOR = GREEN
+        
+        health_width = (self.health / 100) * bar_width
+        if self.health != 100:
+            pygame.draw.rect(screen, COLOR, (self.x, self.y+64+10, health_width, bar_height))
 
 player = Player()
 
@@ -106,6 +122,7 @@ class Enemy:
         self.explosion_time = sys.float_info.min
         self.defeat_time = sys.float_info.min
         self.crash_time = sys.float_info.min
+        self.health_bar_time = sys.float_info.min
 
     def spawn(self):
         if not self.isBoss:
@@ -139,6 +156,28 @@ class Enemy:
                 self.x_change = -BOSS_SPEED
             else:
                 self.x_change = -ENEMY_SPEED
+    
+    def draw_health_bar(self):
+        bar_width = enemy.width
+        bar_height = 5
+        RED = (180, 0, 0)
+        GREEN = (0, 180, 100)
+        if self.health < 30:
+            COLOR = RED
+        else:
+            COLOR = GREEN
+        
+        if self.isBoss:
+            health_width = (self.health / 1000) * bar_width
+            if self.health != 1000:
+                pygame.draw.rect(screen, COLOR, (self.x, self.y-10, health_width, bar_height))
+        else:
+            health_width = (self.health / 100) * bar_width
+            if self.health != 100:
+                pygame.draw.rect(screen, COLOR, (self.x, self.y-10, health_width, bar_height))
+
+        # pygame.draw.rect(screen, RED, (self.x, self.y-10, bar_width, bar_height))
+
 
 class Bullet:
     def __init__(self, x, y):
@@ -194,9 +233,7 @@ while running:
 
     level_indicator = font2.render(f"Level: {LEVEL}", True, (255,255,255))
     score_indicator = font2.render(f"Score: {SCORE}", True, (255,255,255))
-    health_indicator = font2.render(f"Health: {player.health}%", True, (255,255,255))
     score_indicator_rect = score_indicator.get_rect()
-    health_indicator_rect = health_indicator.get_rect()
     screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
@@ -245,6 +282,9 @@ while running:
     for enemy in enemies:
         enemy.spawn()
         enemy.move()
+        if current_time - enemy.health_bar_time <= HEALTH_BAR_DELAY:
+            enemy.draw_health_bar()
+            
         if current_time - enemy.explosion_time <= EXPLOSION_DELAY:
             screen.blit(explodeImg, (enemy.x+(enemy.width)//2-12, enemy.y+(enemy.width)//2-12))
 
@@ -281,6 +321,7 @@ while running:
             if math.sqrt(math.pow((bullet.x+12-(enemy.x+(enemy.width/2)/2)), 2)+math.pow((bullet.y-(enemy.y+enemy.width/2)), 2)) < enemy.width/2:
                 enemy.health -= 10
                 enemy.explosion_time = current_time
+                enemy.health_bar_time = current_time
                 try:
                     bullets.remove(bullet)
                 except ValueError:
@@ -307,12 +348,14 @@ while running:
             slimes.remove(slime)
             player.health -= 10
             player.explosion_time = current_time
+            player.health_bar_time = current_time
             if player.health == 0:
                 player.defeat_time = current_time
                 defeated.append(player)
         elif (math.sqrt(math.pow((slime.x-player.x), 2)+math.pow((slime.y-player.y-35), 2))) < 50 and slime.enemy_width == BOSS_WIDTH:
             slimes.remove(slime)
             player.health -= 10
+            player.health_bar_time = current_time
             if player.health == 0:
                 player.defeat_time = current_time
                 defeated.append(player)
@@ -323,6 +366,10 @@ while running:
     if not player.health == 0:
         player.move()
         player.draw()
+
+        if current_time - player.health_bar_time <= HEALTH_BAR_DELAY:
+            player.draw_health_bar()
+
         if current_time - player.explosion_time <= EXPLOSION_DELAY:
             screen.blit(explodeImg, (player.x+(PLAYER_WIDTH)//2-12, player.y+(PLAYER_WIDTH)//2-12))
 
@@ -332,9 +379,6 @@ while running:
         screen.blit(level_indicator,(10, 10))
         score_indicator_rect.topright = (SCREEN_WIDTH-10, 10)
         screen.blit(score_indicator, score_indicator_rect)
-        health_indicator_rect.bottomleft = (10, SCREEN_HEIGHT-10)
-        screen.blit(health_indicator, health_indicator_rect)
-
     else:
         gameover()
         score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
