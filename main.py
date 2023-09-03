@@ -21,6 +21,7 @@ GAME_OVER = False
 LEVEL = 1
 ENEMY_SPEED = 0.3
 BOSS_SPEED = 0.2
+SCORE = 0
 
 #Initialize pygame
 pygame.init()
@@ -168,6 +169,8 @@ while running:
     current_time = pygame.time.get_ticks()
 
     level_indicator = font2.render(f"Level: {LEVEL}", True, (255,255,255))
+    score_indicator = font2.render(f"Score: {SCORE}", True, (255,255,255))
+    score_indicator_rect = score_indicator.get_rect()
     screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
@@ -240,11 +243,13 @@ while running:
                 bullets.remove(bullet)
                 if enemy.health <= 0:
                     enemies.remove(enemy)
+                    SCORE += 100
                     if enemy.isBoss:
                         ENEMY_COUNT = 0
                         LEVEL += 1 
                         ENEMY_SPEED += 0.2
                         BOSS_SPEED += 0.1 
+                        SCORE += 900
 
         if (bullet in bullets) and (bullet.y < 0):
             bullets.remove(bullet) 
@@ -260,11 +265,16 @@ while running:
         if slime.y > SCREEN_HEIGHT:
             slimes.remove(slime)
 
-    screen.blit(level_indicator,(10, 10))
     if not player.crashed:
         player.move()
         player.draw()
+        screen.blit(level_indicator,(10, 10))
+        score_indicator_rect.topright = (SCREEN_WIDTH-10, 10)
+        screen.blit(score_indicator, score_indicator_rect)
     else:
         gameover()
+        score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
+        screen.blit(score_indicator, score_indicator_rect)
+
 
     pygame.display.update()
