@@ -11,11 +11,18 @@ BOSS_WIDTH = 128
 BOSS_HEIGHT = 128
 ENEMY_SPAWN_DELAY = 5000
 FIRE_DELAY = 100
+LAST_SHOT_TIME = 0
+LAST_SPAWN_TIME = 0
+ENEMY_COUNT = 0
+JUST_SPAWNED = True
+SPAWN_DELAY = 5000
+ENEMY_COUNT = 0
+GAME_OVER = False
 
 #Initialize pygame
 pygame.init()
 
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Title and Icon
 pygame.display.set_caption("Space Invaders")
@@ -23,52 +30,50 @@ icon = pygame.image.load("assets/icon.png")
 pygame.display.set_icon(icon)
 
 background = pygame.image.load("assets/space.jpg")
-
 playerImg = pygame.image.load("assets/spaceship.png")
-playerX = (800-64)/2
-playerY = 600-64-30
-playerX_change = 0
-playerY_change = 0
-crashed = False
-
 enemyImg = pygame.image.load("assets/alien.png")
 bossImg = pygame.image.load("assets/monster.png")
-enemies = []
-destroyed = True
-last_spawn_time = 0
-spawn_delay = 5000
-enemy_count = 0
-
 bulletImg = pygame.image.load("assets/bullet.png")
-fire = False
-fire_delay = 100
-bullets = []
-last_shot_time = 0
-
 slimeImg = pygame.image.load("assets/slime.png")
-slimes = []
-
 gameoverImg = pygame.image.load("assets/gameover.png")
 
-def player(x, y):
-    screen.blit(playerImg, (x, y))
+
+class Player:
+    def __init__(self):
+        self.image = playerImg
+        self.x = (SCREEN_WIDTH - PLAYER_WIDTH) / 2
+        self.y = SCREEN_HEIGHT - PLAYER_HEIGHT - 30
+        self.x_change = 0
+        self.y_change = 0
+        self.crashed = False
+
+    def move(self):
+        self.x += self.x_change
+        self.y += self.y_change
+        self.x = max(0, min(SCREEN_WIDTH - PLAYER_WIDTH, self.x))
+        self.y = max(0, min(SCREEN_HEIGHT - PLAYER_HEIGHT, self.y))
+
+    def draw(self):
+        screen.blit(self.image, (self.x, self.y))
+
+player = Player()
 
 def gameover():
-    global fire, playerX, playerY, enemy_count
-    enemy_count = 0
-    screen.blit(gameoverImg, ((800-600)/2, (600-309)/2))
+    global ENEMY_COUNT, GAME_OVER
+    ENEMY_COUNT = 0
+    screen.blit(gameoverImg, ((SCREEN_WIDTH-SCREEN_HEIGHT)/2, (SCREEN_HEIGHT-309)/2))
     enemies.clear()
-    fire = False
     screen.blit(text_surface,text_rect.topleft)
-    playerX = (800-64)/2
-    playerY = 600-64-30
+    player.x = (SCREEN_WIDTH-PLAYER_WIDTH)/2
+    player.y = (SCREEN_HEIGHT-PLAYER_HEIGHT)-30
     slimes.clear()
+    GAME_OVER = True
     
 class Enemy:
     def __init__(self):
         self.height = 64
         self.width = 64
-        self.x = random.randint(0, 800-64)
+        self.x = random.randint(0, SCREEN_HEIGHT - 64)
         self.y = -self.height
         self.x_change = 0.3
         self.y_change = 0.3
@@ -101,31 +106,47 @@ class Enemy:
             self.v_move = True
             self.h_move = False
             self.x_change = 0.3
-        elif self.x > 800-64:
-            self.x = 800-64
+        elif self.x > SCREEN_WIDTH-BOSS_WIDTH:
+            self.x = SCREEN_WIDTH-BOSS_WIDTH
             self.v_move = True
             self.h_move = False
             self.x_change = -0.3
 
 class Bullet:
-    def __init__(self, x, y, speed):
+    def __init__(self, x, y):
+        self.image = bulletImg
         self.x = x
         self.y = y
-        self.speed = speed
+        self.speed = 5
 
-    def fire_bullet(self, image):
-        screen.blit(image, (self.x+32-12, self.y-15))
+    def draw(self):
+        screen.blit(self.image, (self.x + 32 - 12, self.y - 15))
 
-    def move_bullet(self):
+    def move(self):
         self.y -= self.speed
 
-    def move_slime(self):
+class Slime:
+    def __init__(self, x, y, enemy_width):
+        self.image = slimeImg
+        self.x = x
+        self.y = y
+        self.speed = 1
+        self.enemy_width = enemy_width
+
+    def move(self):
         self.y += self.speed
+
+    def draw(self):
+        screen.blit(self.image, (self.x + self.enemy_width/2 - 12, self.y - 12))
 
 font = pygame.font.Font(None, 36)
 text_surface = font.render("Press Spacebar to Play Again!", True, (255,255,255))
 text_rect = text_surface.get_rect()
-text_rect.center = (800//2, (600//2)+200)
+text_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2)+200)
+
+enemies = []
+bullets = []
+slimes = []
 
 running  = True
 while running:
@@ -142,42 +163,39 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                playerX_change = -1
+                player.x_change = -1
             if event.key == pygame.K_RIGHT:
-                playerX_change = 1
+                player.x_change = 1
             if event.key == pygame.K_UP:
-                playerY_change = -1
+                player.y_change = -1
             if event.key == pygame.K_DOWN:
-                playerY_change = 1
+                player.y_change = 1
             if event.key == pygame.K_SPACE:
-                if crashed:
-                    crashed = False
+                if player.crashed:
+                    player.crashed = False
                 else:
-                    fire = True
+                    if current_time - LAST_SHOT_TIME >= FIRE_DELAY and not GAME_OVER:
+                        new_bullet = Bullet(player.x, player.y)
+                        bullets.append(new_bullet)
+                        LAST_SHOT_TIME = current_time
 
         if event.type == pygame.KEYUP:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
-                playerX_change = 0
+                player.x_change = 0
             elif event.key in (pygame.K_UP, pygame.K_DOWN):
-                playerY_change = 0
-            elif event.key == pygame.K_SPACE:
-                fire = False
+                player.y_change = 0
 
-
-    playerX += playerX_change
-    playerY += playerY_change
-
-    if (destroyed or ((current_time - last_spawn_time) >= spawn_delay)) and not crashed:
-        if enemy_count < 5:
+    if (JUST_SPAWNED or ((current_time - LAST_SPAWN_TIME) >= SPAWN_DELAY)) and not player.crashed:
+        if ENEMY_COUNT < 5:
             enemy_spawn = Enemy()
             enemy_spawn.height = 64
             enemy_spawn.width = 64
             enemies.append(enemy_spawn)
-            destroyed = False
-            last_spawn_time  = current_time
+            JUST_SPAWNED = False
+            LAST_SPAWN_TIME  = current_time
             enemy_spawn.spawn_time = current_time
-            enemy_count += 1
-        elif enemy_count == 5:
+            ENEMY_COUNT += 1
+        elif ENEMY_COUNT == 5:
             enemy_spawn = Enemy()
             enemy_spawn.height = 128
             enemy_spawn.width = 128
@@ -185,62 +203,48 @@ while running:
             enemy_spawn.isBoss = True
             enemy_spawn.health = 1000
             enemies.append(enemy_spawn)
-            last_spawn_time  = current_time
+            LAST_SPAWN_TIME  = current_time
             enemy_spawn.spawn_time = current_time
-            enemy_count += 1
+            ENEMY_COUNT += 1
 
     for enemy in enemies:
         enemy.spawn()
         enemy.move()
         if (current_time - enemy.last_slime_time > 3000) and (current_time - enemy.spawn_time > 3000):
-            new_slime = Bullet(enemy.x, enemy.y+48, 1)
+            new_slime = Slime(enemy.x, enemy.y+48, enemy.width)
             slimes.append(new_slime)
             enemy.last_slime_time = current_time
-        if math.sqrt(math.pow((enemy.x-playerX), 2)+math.pow((enemy.y-playerY), 2)) < 40:
-            crashed = True
-
-        if playerX < 0:
-            playerX = 0
-        elif playerX > 800-64:
-            playerX = 800-64
-
-        if playerY < 0:
-            playerY = 0
-        elif playerY > 600-64:
-            playerY = 600-64
-
-    if fire and (current_time - last_shot_time) >= fire_delay:
-        new_bullet = Bullet(playerX, playerY, 5)
-        bullets.append(new_bullet)
-        last_shot_time = current_time
+        if math.sqrt(math.pow((enemy.x-player.x), 2)+math.pow((enemy.y-player.y), 2)) < 40:
+            player.crashed = True
 
     for bullet in bullets:
-        bullet.fire_bullet(bulletImg)
-        bullet.move_bullet()
+        bullet.draw()
+        bullet.move()
         for enemy in enemies:
             if math.sqrt(math.pow((bullet.x+12-(enemy.x+(enemy.width/2)/2)), 2)+math.pow((bullet.y-(enemy.y+enemy.width/2)), 2)) < enemy.width/2:
                 enemy.health -= 10
-                bullets.pop(bullets.index(bullet))
-                if enemy.health == 0:
-                    enemies.pop(enemies.index(enemy))
-                elif enemy.health == 0 and enemy.isBoss:
-                    enemy_count = 0 
-                    enemies.pop(enemies.index(enemy))
+                bullets.remove(bullet)
+                if enemy.health <= 0:
+                    enemies.remove(enemy)
+                elif enemy.health <= 0 and enemy.isBoss:
+                    ENEMY_COUNT = 0 
+                    enemies.remove(enemy)
 
         if (bullet in bullets) and (bullet.y < 0):
-            bullets.pop(bullets.index(bullet)) 
+            bullets.remove(bullet) 
 
     for slime in slimes:
-        slime.fire_bullet(slimeImg)
-        slime.move_slime()
-        if (math.sqrt(math.pow((slime.x+12-playerX+32), 2)+math.pow((slime.y-playerY+32), 2))) < 30:
-            crashed = True
+        slime.move()
+        slime.draw()
+        if (math.sqrt(math.pow((slime.x+12-player.x+32), 2)+math.pow((slime.y-player.y+32), 2))) < 30:
+            player.crashed = True
 
-        if slime.y > 600:
-            slimes.pop(slimes.index(slime))
+        if slime.y > SCREEN_HEIGHT:
+            slimes.remove(slime)
 
-    if not crashed:
-        player(playerX, playerY)
+    if not player.crashed:
+        player.move()
+        player.draw()
     else:
         gameover()
 
