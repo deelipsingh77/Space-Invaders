@@ -173,6 +173,7 @@ while running:
             if event.key == pygame.K_SPACE:
                 if player.crashed:
                     player.crashed = False
+                    GAME_OVER = False
                 else:
                     if current_time - LAST_SHOT_TIME >= FIRE_DELAY and not GAME_OVER:
                         new_bullet = Bullet(player.x, player.y)
@@ -226,9 +227,8 @@ while running:
                 bullets.remove(bullet)
                 if enemy.health <= 0:
                     enemies.remove(enemy)
-                elif enemy.health <= 0 and enemy.isBoss:
-                    ENEMY_COUNT = 0 
-                    enemies.remove(enemy)
+                    if enemy.isBoss:
+                        ENEMY_COUNT = 0 
 
         if (bullet in bullets) and (bullet.y < 0):
             bullets.remove(bullet) 
