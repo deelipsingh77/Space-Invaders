@@ -10,7 +10,6 @@ PLAYER_WIDTH = 64
 PLAYER_HEIGHT = 64
 BOSS_WIDTH = 128
 BOSS_HEIGHT = 128
-ENEMY_SPAWN_DELAY = 5000
 FIRE_DELAY = 0
 LAST_SHOT_TIME = 0
 LAST_SPAWN_TIME = 0
@@ -20,6 +19,7 @@ SPAWN_DELAY = 5000
 EXPLOSION_DELAY = 100
 CRASH_DELAY = 150
 HEALTH_BAR_DELAY = 3000
+SLIME_DELAY = 3000
 ENEMY_COUNT = 0
 LEVEL = 1
 ENEMY_SPEED = 0.3
@@ -38,7 +38,7 @@ pygame.display.set_icon(icon)
 
 background = pygame.image.load("assets/space.jpg")
 playerImg = pygame.image.load("assets/spaceship.png")
-enemyImg = [pygame.image.load("assets/alien.png"), pygame.image.load("assets/ufo.png")]
+enemyImg = [pygame.image.load("assets/alien.png"), pygame.image.load("assets/ufo.png"), pygame.image.load("assets/monster2.png")]
 bossImg = pygame.image.load("assets/monster.png")
 bulletImg = pygame.image.load("assets/bullet.png")
 slimeImg = pygame.image.load("assets/slime.png")
@@ -73,6 +73,7 @@ class Player:
     def draw_health_bar(self):
         bar_width = player.width
         bar_height = 5
+        GRAY = (80, 80, 80)
         RED = (180, 0, 0)
         GREEN = (0, 180, 100)
         if self.health < 30:
@@ -82,6 +83,7 @@ class Player:
         
         health_width = (self.health / 100) * bar_width
         if self.health != 100:
+            pygame.draw.rect(screen, GRAY, (self.x, self.y+64+10, bar_width, bar_height))
             pygame.draw.rect(screen, COLOR, (self.x, self.y+64+10, health_width, bar_height))
 
 player = Player()
@@ -160,6 +162,7 @@ class Enemy:
     def draw_health_bar(self):
         bar_width = enemy.width
         bar_height = 5
+        GRAY = (80, 80, 80)
         RED = (180, 0, 0)
         GREEN = (0, 180, 100)
         if self.health < 30:
@@ -170,14 +173,13 @@ class Enemy:
         if self.isBoss:
             health_width = (self.health / 1000) * bar_width
             if self.health != 1000:
+                pygame.draw.rect(screen, GRAY, (self.x, self.y-10, bar_width, bar_height))
                 pygame.draw.rect(screen, COLOR, (self.x, self.y-10, health_width, bar_height))
         else:
             health_width = (self.health / 100) * bar_width
             if self.health != 100:
+                pygame.draw.rect(screen, GRAY, (self.x, self.y-10, bar_width, bar_height))
                 pygame.draw.rect(screen, COLOR, (self.x, self.y-10, health_width, bar_height))
-
-        # pygame.draw.rect(screen, RED, (self.x, self.y-10, bar_width, bar_height))
-
 
 class Bullet:
     def __init__(self, x, y):
@@ -219,6 +221,26 @@ text_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2)+200)
 
 font2 = pygame.font.Font(None, 30)
 
+def reset():
+    global SPAWN_DELAY, FIRE_DELAY, LAST_SHOT_TIME, LAST_SPAWN_TIME, ENEMY_COUNT, JUST_SPAWNED, EXPLOSION_DELAY, CRASH_DELAY, HEALTH_BAR_DELAY, SLIME_DELAY, SLIME_DELAY, LEVEL, ENEMY_SPEED, BOSS_SPEED, SCORE
+
+    SPAWN_DELAY = 5000
+    FIRE_DELAY = 0
+    LAST_SHOT_TIME = 0
+    LAST_SPAWN_TIME = 0
+    ENEMY_COUNT = 0
+    JUST_SPAWNED = True
+    EXPLOSION_DELAY = 100
+    CRASH_DELAY = 150
+    HEALTH_BAR_DELAY = 3000
+    SLIME_DELAY = 3000
+    ENEMY_COUNT = 0
+    LEVEL = 1
+    ENEMY_SPEED = 0.3
+    BOSS_SPEED = 0.2
+    SCORE = 0
+
+
 enemies = []
 bullets = []
 slimes = []
@@ -252,6 +274,7 @@ while running:
             if event.key == pygame.K_SPACE:
                 if player.health <= 0:
                     player.health = 100
+                    reset()
                 else:
                     if current_time - LAST_SHOT_TIME >= FIRE_DELAY and not player.health == 0:
                         new_bullet = Bullet(player.x, player.y)
@@ -291,7 +314,7 @@ while running:
         if current_time - enemy.crash_time <= EXPLOSION_DELAY:
             screen.blit(blastingImg, (enemy.x+(enemy.width)//2-32, enemy.y+enemy.width-24))
 
-        if (current_time - enemy.last_slime_time > 3000) and (current_time - enemy.spawn_time > 3000):
+        if (current_time - enemy.last_slime_time >= SLIME_DELAY) and (current_time - enemy.spawn_time >= SLIME_DELAY):
             new_slime = Slime(enemy.x, enemy.y+48, enemy.width)
             slimes.append(new_slime)
             enemy.last_slime_time = current_time
@@ -329,14 +352,18 @@ while running:
                 if enemy.health <= 0:
                     enemy.defeat_time = current_time
                     defeated.append(enemy)
-                    enemies.remove(enemy)
                     SCORE += 100
                     if enemy.isBoss:
                         ENEMY_COUNT = 0
-                        LEVEL += 1 
+                        LEVEL += 1
+                        SLIME_DELAY = 500 if SLIME_DELAY < 1000 else SLIME_DELAY - 500
+                        SPAWN_DELAY = 500 if SPAWN_DELAY < 1000 else SPAWN_DELAY - 500
+                        player.health = 100
+                        player.health_bar_time = current_time
                         ENEMY_SPEED += 0.2
-                        BOSS_SPEED += 0.1 
+                        BOSS_SPEED += 0.2 
                         SCORE += 900
+                    enemies.remove(enemy)
 
         if (bullet in bullets) and (bullet.y < 0):
             bullets.remove(bullet) 
@@ -352,9 +379,10 @@ while running:
             if player.health == 0:
                 player.defeat_time = current_time
                 defeated.append(player)
-        elif (math.sqrt(math.pow((slime.x-player.x), 2)+math.pow((slime.y-player.y-35), 2))) < 50 and slime.enemy_width == BOSS_WIDTH:
+        elif (math.sqrt(math.pow((slime.x-player.x+32), 2)+math.pow((slime.y-player.y-50), 2))) < 60 and slime.enemy_width == BOSS_WIDTH:
             slimes.remove(slime)
             player.health -= 10
+            player.explosion_time = current_time
             player.health_bar_time = current_time
             if player.health == 0:
                 player.defeat_time = current_time
