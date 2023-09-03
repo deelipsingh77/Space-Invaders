@@ -2,6 +2,16 @@ import pygame
 import random
 import math
 
+#Constants
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+PLAYER_WIDTH = 64
+PLAYER_HEIGHT = 64
+BOSS_WIDTH = 128
+BOSS_HEIGHT = 128
+ENEMY_SPAWN_DELAY = 5000
+FIRE_DELAY = 100
+
 #Initialize pygame
 pygame.init()
 
@@ -22,10 +32,12 @@ playerY_change = 0
 crashed = False
 
 enemyImg = pygame.image.load("assets/alien.png")
+bossImg = pygame.image.load("assets/monster.png")
 enemies = []
 destroyed = True
 last_spawn_time = 0
 spawn_delay = 5000
+enemy_count = 0
 
 bulletImg = pygame.image.load("assets/bullet.png")
 fire = False
@@ -42,7 +54,8 @@ def player(x, y):
     screen.blit(playerImg, (x, y))
 
 def gameover():
-    global fire, playerX, playerY
+    global fire, playerX, playerY, enemy_count
+    enemy_count = 0
     screen.blit(gameoverImg, ((800-600)/2, (600-309)/2))
     enemies.clear()
     fire = False
@@ -53,8 +66,10 @@ def gameover():
     
 class Enemy:
     def __init__(self):
+        self.height = 64
+        self.width = 64
         self.x = random.randint(0, 800-64)
-        self.y = -64
+        self.y = -self.height
         self.x_change = 0.3
         self.y_change = 0.3
         self.last_slime_time = 0
@@ -63,10 +78,13 @@ class Enemy:
         self.v_move = True
         self.start = -10
         self.health = 100
+        self.isBoss = False
 
     def spawn(self):
-        screen.blit(enemyImg, (self.x, self.y))
-        self.move()
+        if not self.isBoss:
+            screen.blit(enemyImg, (self.x, self.y))
+        else:
+            screen.blit(bossImg, (self.x, self.y))
 
     def move(self):
         if self.v_move:
@@ -150,14 +168,30 @@ while running:
     playerY += playerY_change
 
     if (destroyed or ((current_time - last_spawn_time) >= spawn_delay)) and not crashed:
-        enemy_spawn = Enemy()
-        enemies.append(enemy_spawn)
-        destroyed = False
-        last_spawn_time  = current_time
-        enemy_spawn.spawn_time = current_time
+        if enemy_count < 5:
+            enemy_spawn = Enemy()
+            enemy_spawn.height = 64
+            enemy_spawn.width = 64
+            enemies.append(enemy_spawn)
+            destroyed = False
+            last_spawn_time  = current_time
+            enemy_spawn.spawn_time = current_time
+            enemy_count += 1
+        elif enemy_count == 5:
+            enemy_spawn = Enemy()
+            enemy_spawn.height = 128
+            enemy_spawn.width = 128
+            enemy_spawn.y_change = 0.1
+            enemy_spawn.isBoss = True
+            enemy_spawn.health = 1000
+            enemies.append(enemy_spawn)
+            last_spawn_time  = current_time
+            enemy_spawn.spawn_time = current_time
+            enemy_count += 1
 
     for enemy in enemies:
         enemy.spawn()
+        enemy.move()
         if (current_time - enemy.last_slime_time > 3000) and (current_time - enemy.spawn_time > 3000):
             new_slime = Bullet(enemy.x, enemy.y+48, 1)
             slimes.append(new_slime)
@@ -165,15 +199,15 @@ while running:
         if math.sqrt(math.pow((enemy.x-playerX), 2)+math.pow((enemy.y-playerY), 2)) < 40:
             crashed = True
 
-    if playerX < 0:
-        playerX = 0
-    elif playerX > 800-64:
-        playerX = 800-64
+        if playerX < 0:
+            playerX = 0
+        elif playerX > 800-64:
+            playerX = 800-64
 
-    if playerY < 0:
-        playerY = 0
-    elif playerY > 600-64:
-        playerY = 600-64
+        if playerY < 0:
+            playerY = 0
+        elif playerY > 600-64:
+            playerY = 600-64
 
     if fire and (current_time - last_shot_time) >= fire_delay:
         new_bullet = Bullet(playerX, playerY, 5)
@@ -184,10 +218,13 @@ while running:
         bullet.fire_bullet(bulletImg)
         bullet.move_bullet()
         for enemy in enemies:
-            if math.sqrt(math.pow((bullet.x-enemy.x), 2)+math.pow((bullet.y-enemy.y), 2)) < 30:
+            if math.sqrt(math.pow((bullet.x+12-(enemy.x+(enemy.width/2)/2)), 2)+math.pow((bullet.y-(enemy.y+enemy.width/2)), 2)) < enemy.width/2:
                 enemy.health -= 10
                 bullets.pop(bullets.index(bullet))
                 if enemy.health == 0:
+                    enemies.pop(enemies.index(enemy))
+                elif enemy.health == 0 and enemy.isBoss:
+                    enemy_count = 0 
                     enemies.pop(enemies.index(enemy))
 
         if (bullet in bullets) and (bullet.y < 0):
@@ -196,7 +233,7 @@ while running:
     for slime in slimes:
         slime.fire_bullet(slimeImg)
         slime.move_slime()
-        if (math.sqrt(math.pow((slime.x-playerX), 2)+math.pow((slime.y-playerY), 2))) < 30:
+        if (math.sqrt(math.pow((slime.x+12-playerX+32), 2)+math.pow((slime.y-playerY+32), 2))) < 30:
             crashed = True
 
         if slime.y > 600:
