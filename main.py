@@ -12,6 +12,8 @@ pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load("assets/icon.png")
 pygame.display.set_icon(icon)
 
+background = pygame.image.load("assets/space.jpg")
+
 playerImg = pygame.image.load("assets/spaceship.png")
 playerX = (800-64)/2
 playerY = 600-64-30
@@ -52,25 +54,39 @@ def gameover():
 class Enemy:
     def __init__(self):
         self.x = random.randint(0, 800-64)
-        self.y = random.randint(30, 300-64-30)
+        self.y = -64
         self.x_change = 0.3
-        self.y_change = 40
+        self.y_change = 0.3
         self.last_slime_time = 0
         self.spawn_time = 0
+        self.h_move = False
+        self.v_move = True
+        self.start = -10
+        self.health = 100
 
     def spawn(self):
         screen.blit(enemyImg, (self.x, self.y))
         self.move()
 
     def move(self):
-        self.x += self.x_change
+        if self.v_move:
+            self.y += self.y_change
+            if round(self.y - self.start) > 70:
+                self.v_move = False
+                self.h_move = True
+                self.start = self.y
+        elif self.h_move:
+            self.x += self.x_change
+
         if self.x < 0:
             self.x = 0
-            self.y += self.y_change
+            self.v_move = True
+            self.h_move = False
             self.x_change = 0.3
         elif self.x > 800-64:
             self.x = 800-64
-            self.y += self.y_change
+            self.v_move = True
+            self.h_move = False
             self.x_change = -0.3
 
 class Bullet:
@@ -96,7 +112,11 @@ text_rect.center = (800//2, (600//2)+200)
 running  = True
 while running:
     #Background Color    
-    screen.fill((0, 0, 0))
+    # screen.fill((0, 0, 0))
+
+    current_time = pygame.time.get_ticks()
+
+    screen.blit(background, (0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -125,7 +145,6 @@ while running:
             elif event.key == pygame.K_SPACE:
                 fire = False
 
-    current_time = pygame.time.get_ticks()
 
     playerX += playerX_change
     playerY += playerY_change
@@ -140,10 +159,11 @@ while running:
     for enemy in enemies:
         enemy.spawn()
         if (current_time - enemy.last_slime_time > 3000) and (current_time - enemy.spawn_time > 3000):
-            new_slime = Bullet(enemy.x, enemy.y, 1)
+            new_slime = Bullet(enemy.x, enemy.y+48, 1)
             slimes.append(new_slime)
             enemy.last_slime_time = current_time
-
+        if math.sqrt(math.pow((enemy.x-playerX), 2)+math.pow((enemy.y-playerY), 2)) < 40:
+            crashed = True
 
     if playerX < 0:
         playerX = 0
@@ -165,8 +185,10 @@ while running:
         bullet.move_bullet()
         for enemy in enemies:
             if math.sqrt(math.pow((bullet.x-enemy.x), 2)+math.pow((bullet.y-enemy.y), 2)) < 30:
+                enemy.health -= 10
                 bullets.pop(bullets.index(bullet))
-                enemies.pop(enemies.index(enemy))
+                if enemy.health == 0:
+                    enemies.pop(enemies.index(enemy))
 
         if (bullet in bullets) and (bullet.y < 0):
             bullets.pop(bullets.index(bullet)) 
@@ -179,10 +201,6 @@ while running:
 
         if slime.y > 600:
             slimes.pop(slimes.index(slime))
-
-    for enemy in enemies:
-        if math.sqrt(math.pow((enemy.x-playerX), 2)+math.pow((enemy.y-playerY), 2)) < 40:
-            crashed = True
 
     if not crashed:
         player(playerX, playerY)
