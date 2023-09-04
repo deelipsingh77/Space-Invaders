@@ -16,7 +16,7 @@ LEVEL_BANNER_TIME = 0
 PLAY_TIME = 0
 ENEMY_COUNT = 0
 JUST_SPAWNED = True
-FIRE_DELAY = 0
+FIRE_DELAY = 150
 LEVEL_DELAY = 3000
 SPAWN_DELAY = 5000
 EXPLOSION_DELAY = 100
@@ -34,6 +34,7 @@ SCORE = 0
 STAR_GENERATION_TIME = 0
 COLORS = [(255, 255, 255), (255, 255, 200), (255, 225, 150)]
 PAUSED = False
+SHOOT = False
 
 #Initialize pygame
 pygame.init()
@@ -253,29 +254,26 @@ def pause():
     screen.blit(pauseImg, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def you_win():
+    global PAUSED
     screen.blit(youwinImg, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
     screen.blit(text_surface2,text_rect2)
-    reset()
+    PAUSED = True
 
 def reset():
-    global SPAWN_DELAY, FIRE_DELAY, LAST_SHOT_TIME, LAST_SPAWN_TIME, ENEMY_COUNT, JUST_SPAWNED, EXPLOSION_DELAY, CRASH_DELAY, HEALTH_BAR_DELAY, SLIME_DELAY, SLIME_DELAY, LEVEL, ENEMY_SPEED, BOSS_SPEED, SCORE
+    global SPAWN_DELAY, FIRE_DELAY, LAST_SHOT_TIME, LAST_SPAWN_TIME, ENEMY_COUNT, JUST_SPAWNED, SLIME_DELAY, LEVEL, ENEMY_SPEED, BOSS_SPEED
 
     player.x = (SCREEN_WIDTH-PLAYER_WIDTH)/2
     player.y = (SCREEN_HEIGHT-PLAYER_HEIGHT)-30
-    SPAWN_DELAY = 5000
-    FIRE_DELAY = 0
     LAST_SHOT_TIME = 0
     LAST_SPAWN_TIME = 0
     ENEMY_COUNT = 0
     JUST_SPAWNED = True
-    EXPLOSION_DELAY = 100
-    CRASH_DELAY = 100
-    HEALTH_BAR_DELAY = 3000
+    FIRE_DELAY = 150
+    SPAWN_DELAY = 5000
     SLIME_DELAY = 3000
-    ENEMY_COUNT = 0
     LEVEL = 1
     ENEMY_SPEED = 0.3
-    BOSS_SPEED = 0.2
+    BOSS_SPEED = 0.3
     enemies.clear()
     slimes.clear()
     bullets.clear()
@@ -335,16 +333,20 @@ while running:
                     player.health = 100
                     SCORE = 0
                 elif player.health > 0 and LEVEL < 6:
-                    if current_time - LAST_SHOT_TIME >= FIRE_DELAY and not player.health == 0:
-                        new_bullet = Bullet(player.x, player.y)
-                        bullets.append(new_bullet)
-                        LAST_SHOT_TIME = current_time
+                    SHOOT = True
 
         if event.type == pygame.KEYUP:
             if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
                 player.x_change = 0
             elif event.key in (pygame.K_UP, pygame.K_DOWN):
                 player.y_change = 0
+            elif event.key == pygame.K_SPACE:
+                SHOOT = False
+
+    if current_time - LAST_SHOT_TIME >= FIRE_DELAY and not player.health <= 0 and SHOOT:
+        new_bullet = Bullet(player.x, player.y)
+        bullets.append(new_bullet)
+        LAST_SHOT_TIME = current_time
 
     if (JUST_SPAWNED or ((current_time - LAST_SPAWN_TIME) >= SPAWN_DELAY)) and not player.health <= 0 and not (current_time - LEVEL_BANNER_TIME <= LEVEL_DELAY) and not PAUSED:
         if ENEMY_COUNT < 5*LEVEL:
@@ -438,6 +440,7 @@ while running:
                         LEVEL += 1
                         SLIME_DELAY = 500 if SLIME_DELAY < 1000 else SLIME_DELAY - 500
                         SPAWN_DELAY = 500 if SPAWN_DELAY < 1000 else SPAWN_DELAY - 500
+                        FIRE_DELAY -= (LEVEL-1)*10
                         player.health = 100 + (LEVEL - 1) * 10
                         player.max_health = 100 + (LEVEL - 1) * 10
                         player.health_bar_time = current_time
