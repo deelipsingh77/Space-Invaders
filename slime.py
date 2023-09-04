@@ -1,9 +1,9 @@
 from constants import GAME_LEVEL, PLAYER_WIDTH
-from assets import load_image, SLIME_IMAGE_PATH
+from assets import slime_img
 
 class Slime:
     def __init__(self, x, y, enemy_width):
-        self.image = load_image(SLIME_IMAGE_PATH)
+        self.image = slime_img
         self.x = x
         self.y = y
         self.speed = 1

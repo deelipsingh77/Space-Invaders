@@ -1,9 +1,9 @@
-from assets import load_image, BULLET_IMAGE_PATH
+from assets import bullet_img
 from constants import GAME_LEVEL
 
 class Bullet:
     def __init__(self, x, y):
-        self.image = load_image(BULLET_IMAGE_PATH)
+        self.image = bullet_img 
         self.x = x
         self.y = y
         self.speed = 5

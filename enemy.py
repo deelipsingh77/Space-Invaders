@@ -1,15 +1,15 @@
 import pygame
 import random
 import sys
-from constants import BOSS_SPEED, GAME_LEVEL, ENEMY_SPEED, SCREEN_WIDTH
-from assets import load_image, ENEMY_IMAGE_PATHS, BOSS_IMAGE_PATHS
+from constants import BOSS_SPEED, GAME_LEVEL, ENEMY_SPEED, SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
+from assets import enemy_img, boss_img
 
 class Enemy:
     def __init__(self, isBoss):
         self.isBoss = isBoss
         if self.isBoss:
-            self.height = 128
-            self.width = 128
+            self.height = BOSS_HEIGHT
+            self.width = BOSS_WIDTH
             self.x_change = BOSS_SPEED
             self.y_change = BOSS_SPEED
             self.max_health = 1000*GAME_LEVEL
@@ -17,18 +17,18 @@ class Enemy:
         else:
             self.x_change = ENEMY_SPEED
             self.y_change = ENEMY_SPEED
-            self.height = 64
-            self.width = 64
+            self.height = PLAYER_HEIGHT
+            self.width = PLAYER_WIDTH
             self.max_health = 100+(GAME_LEVEL-1)*10
             self.health = self.max_health
-        self.x = random.randint(0, SCREEN_WIDTH - 128)
+        self.x = random.randint(0, SCREEN_WIDTH - self.width)
         self.y = -self.height
         self.last_slime_time = 0
         self.spawn_time = 0
         self.h_move = False
         self.v_move = True
         self.start = -10
-        self.enemy = random.choice([load_image(ENEMY_PATH) for ENEMY_PATH in ENEMY_IMAGE_PATHS])
+        self.enemy = random.choice(enemy_img)
         self.explosion_time = sys.float_info.min
         self.defeat_time = sys.float_info.min
         self.crash_time = sys.float_info.min
@@ -38,7 +38,7 @@ class Enemy:
         if not self.isBoss:
             screen.blit(self.enemy, (self.x, self.y))
         else:
-            screen.blit(load_image(BOSS_IMAGE_PATHS[GAME_LEVEL-1]), (self.x, self.y))
+            screen.blit(boss_img[GAME_LEVEL-1], (self.x, self.y))
 
     def move(self):
         if self.v_move:

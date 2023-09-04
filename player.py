@@ -1,11 +1,11 @@
 import pygame
 import sys
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
-from assets import SPACESHIP_IMAGE_PATH, load_image
+from assets import spaceship_img
 
 class Player:
     def __init__(self):
-        self.image = load_image(SPACESHIP_IMAGE_PATH)
+        self.image = spaceship_img 
         self.x = (SCREEN_WIDTH - PLAYER_WIDTH) / 2
         self.y = SCREEN_HEIGHT - PLAYER_HEIGHT - 30
         self.x_change = 0

@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 from constants import *
-from assets import load_image, ICON_IMAGE_PATH, EXPLODE_IMAGE_PATH, BLASTING_IMAGE_PATH, EXPLODE_IMAGE_PATH2, PAUSE_IMAGE_PATH, GAME_OVER_IMAGE_PATH, PLAY_IMAGE_PATH, YOU_WIN_IMAGE_PATH
+from assets import icon_img, explode_img, blast_img, explode2_img, pause_img, gameover_img, play_img, youwin_img
 from player import Player
 from star import Star
 from bullet import Bullet
@@ -12,7 +12,7 @@ from slime import Slime
 def run_game(screen):
     global LAST_SHOT_TIME, LAST_SPAWN_TIME, LEVEL_BANNER_TIME, PLAY_TIME, JUST_SPAWNED, FIRE_DELAY, LEVEL_DELAY, SPAWN_DELAY, EXPLOSION_DELAY, CRASH_DELAY, HEALTH_BAR_DELAY, SLIME_DELAY, PLAY_DELAY, STAR_DELAY, ENEMY_COUNT, GAME_LEVEL, ENEMY_SPEED, BOSS_SPEED, STAR_SPEED, PLAYER_SCORE, STAR_GENERATION_TIME, COLORS, PAUSE_STATE, SHOOT
 
-    pygame.display.set_icon(load_image(ICON_IMAGE_PATH))
+    pygame.display.set_icon(icon_img)
 
     font = pygame.font.Font("assets/fonts/consolai.ttf", 36)
     font2 = pygame.font.Font("assets/fonts/consola.ttf", 25)
@@ -46,19 +46,19 @@ def run_game(screen):
             stars.append(new_star)
 
     def gameover():
-        screen.blit(load_image(GAME_OVER_IMAGE_PATH), ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
+        screen.blit(gameover_img, ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
         screen.blit(game_over_text,game_over_rect)
         reset()
 
     def play():
-        screen.blit(load_image(PLAY_IMAGE_PATH), ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
+        screen.blit(play_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
     def pause():
-        screen.blit(load_image(PAUSE_IMAGE_PATH), ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
+        screen.blit(pause_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
     def you_win():
         global PAUSE_STATE
-        screen.blit(load_image(YOU_WIN_IMAGE_PATH), ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
+        screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
         screen.blit(game_win_text,game_win_rect)
         PAUSE_STATE = True
 
@@ -178,10 +178,10 @@ def run_game(screen):
                 enemy.draw_health_bar(screen)
                 
             if current_time - enemy.explosion_time <= EXPLOSION_DELAY:
-                screen.blit(load_image(EXPLODE_IMAGE_PATH), (enemy.x+(enemy.width)//2-12, enemy.y+(enemy.width)//2-12))
+                screen.blit(explode_img, (enemy.x+(enemy.width)//2-12, enemy.y+(enemy.width)//2-12))
 
             if current_time - enemy.crash_time <= EXPLOSION_DELAY:
-                screen.blit(load_image(BLASTING_IMAGE_PATH), (enemy.x+(enemy.width)//2-32, enemy.y+enemy.width-24))
+                screen.blit(blast_img, (enemy.x+(enemy.width)//2-32, enemy.y+enemy.width-24))
 
             if (current_time - enemy.last_slime_time >= SLIME_DELAY) and (current_time - enemy.spawn_time >= SLIME_DELAY) and not PAUSE_STATE:
                 new_slime = Slime(enemy.x, enemy.y+48, enemy.width)
@@ -205,7 +205,7 @@ def run_game(screen):
         
         for defeat in defeated:
             if current_time - defeat.defeat_time <= EXPLOSION_DELAY:
-                screen.blit(load_image(EXPLODE_IMAGE_PATH2), (defeat.x+(defeat.width)//2-32, defeat.y+(defeat.width)//2-32))
+                screen.blit(explode2_img, (defeat.x+(defeat.width)//2-32, defeat.y+(defeat.width)//2-32))
             else:
                 defeated.remove(defeat)
 
@@ -285,7 +285,7 @@ def run_game(screen):
                     player.draw_health_bar(screen)
 
                 if current_time - player.explosion_time <= EXPLOSION_DELAY:
-                    screen.blit(load_image(EXPLODE_IMAGE_PATH), (player.x+(PLAYER_WIDTH)//2-12, player.y+(PLAYER_WIDTH)//2-12))
+                    screen.blit(explode_img, (player.x+(PLAYER_WIDTH)//2-12, player.y+(PLAYER_WIDTH)//2-12))
 
                 if current_time - player.crash_time <= CRASH_DELAY:
                     player.y += 10 
