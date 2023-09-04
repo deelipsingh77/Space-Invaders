@@ -13,6 +13,7 @@ BOSS_HEIGHT = 128
 LAST_SHOT_TIME = 0
 LAST_SPAWN_TIME = 0
 LEVEL_BANNER_TIME = 0
+PLAY_TIME = 0
 ENEMY_COUNT = 0
 JUST_SPAWNED = True
 FIRE_DELAY = 0
@@ -22,15 +23,17 @@ EXPLOSION_DELAY = 100
 CRASH_DELAY = 100
 HEALTH_BAR_DELAY = 3000
 SLIME_DELAY = 3000
-STAR_DELAY = 3000
+PLAY_DELAY = 500
+STAR_DELAY = 4000
 ENEMY_COUNT = 0
 LEVEL = 1
 ENEMY_SPEED = 0.3
 BOSS_SPEED = 0.3
-STAR_SPEED = 0.03
+STAR_SPEED = 0.05
 SCORE = 0
 STAR_GENERATION_TIME = 0
 COLORS = [(255, 255, 255), (255, 255, 200), (255, 225, 150)]
+PAUSED = False
 
 #Initialize pygame
 pygame.init()
@@ -52,6 +55,8 @@ youwinImg = pygame.image.load("assets/you-win.png")
 explodeImg = pygame.image.load("assets/explode.png")
 explodeImg2 = pygame.image.load("assets/explode2.png")
 blastingImg = pygame.image.load("assets/blasting.png")
+playImg = pygame.image.load("assets/play.png")
+pauseImg = pygame.image.load("assets/pause.png")
 
 class Player:
     def __init__(self):
@@ -211,9 +216,9 @@ class Slime:
 class Star:
     def __init__(self):
         self.x = random.randint(0, SCREEN_WIDTH)
-        self.size = random.randint(1, 4)
+        self.size = random.randint(1, 3)
         self.y = -self.size
-        self.speed = random.uniform(0.01, 0.02) if self.size < 2 else STAR_SPEED
+        self.speed = random.uniform(0.02, 0.04) if self.size <= 2 else STAR_SPEED
         self.color = random.choice(COLORS)
     
     def move(self):
@@ -226,7 +231,7 @@ font = pygame.font.Font(None, 36)
 text_surface = font.render("Press Spacebar to Play Again!", True, (255,255,255))
 text_surface2 = font.render("Press Enter to Play Again!", True, (255,255,255))
 text_rect = text_surface.get_rect()
-text_rect2 = text_surface.get_rect()
+text_rect2 = text_surface2.get_rect()
 text_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2)+200)
 text_rect2.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2)+200)
 
@@ -239,29 +244,24 @@ health_restored_rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 100)
 def gameover():
     screen.blit(gameoverImg, ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
     screen.blit(text_surface,text_rect)
-    player.x = (SCREEN_WIDTH-PLAYER_WIDTH)/2
-    player.y = (SCREEN_HEIGHT-PLAYER_HEIGHT)-30
-    enemies.clear()
-    slimes.clear()
-    bullets.clear()
-    defeated.clear()
     reset()
+
+def play():
+    screen.blit(playImg, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
+
+def pause():
+    screen.blit(pauseImg, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def you_win():
     screen.blit(youwinImg, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
     screen.blit(text_surface2,text_rect2)
-    player.x = (SCREEN_WIDTH-PLAYER_WIDTH)/2
-    player.y = (SCREEN_HEIGHT-PLAYER_HEIGHT)-30
-    enemies.clear()
-    slimes.clear()
-    bullets.clear()
-    defeated.clear()
     reset()
-
 
 def reset():
     global SPAWN_DELAY, FIRE_DELAY, LAST_SHOT_TIME, LAST_SPAWN_TIME, ENEMY_COUNT, JUST_SPAWNED, EXPLOSION_DELAY, CRASH_DELAY, HEALTH_BAR_DELAY, SLIME_DELAY, SLIME_DELAY, LEVEL, ENEMY_SPEED, BOSS_SPEED, SCORE
 
+    player.x = (SCREEN_WIDTH-PLAYER_WIDTH)/2
+    player.y = (SCREEN_HEIGHT-PLAYER_HEIGHT)-30
     SPAWN_DELAY = 5000
     FIRE_DELAY = 0
     LAST_SHOT_TIME = 0
@@ -276,7 +276,10 @@ def reset():
     LEVEL = 1
     ENEMY_SPEED = 0.3
     BOSS_SPEED = 0.2
-    SCORE = 0
+    enemies.clear()
+    slimes.clear()
+    bullets.clear()
+    defeated.clear()
 
 enemies = []
 bullets = []
@@ -320,12 +323,18 @@ while running:
             if event.key == pygame.K_RETURN:
                 if LEVEL > 5:
                     reset()
+            if event.key == pygame.K_ESCAPE:
+                if LEVEL < 6 and player.health > 0:
+                    if PAUSED:
+                        PLAY_TIME = current_time
+                        PAUSED = False
+                    else:
+                        PAUSED = True
             if event.key == pygame.K_SPACE:
                 if player.health <= 0:
                     player.health = 100
-                elif LEVEL > 5:
-                    pass
-                else:
+                    SCORE = 0
+                elif player.health > 0 and LEVEL < 6:
                     if current_time - LAST_SHOT_TIME >= FIRE_DELAY and not player.health == 0:
                         new_bullet = Bullet(player.x, player.y)
                         bullets.append(new_bullet)
@@ -337,7 +346,7 @@ while running:
             elif event.key in (pygame.K_UP, pygame.K_DOWN):
                 player.y_change = 0
 
-    if (JUST_SPAWNED or ((current_time - LAST_SPAWN_TIME) >= SPAWN_DELAY)) and not player.health <= 0 and not (current_time - LEVEL_BANNER_TIME <= LEVEL_DELAY):
+    if (JUST_SPAWNED or ((current_time - LAST_SPAWN_TIME) >= SPAWN_DELAY)) and not player.health <= 0 and not (current_time - LEVEL_BANNER_TIME <= LEVEL_DELAY) and not PAUSED:
         if ENEMY_COUNT < 5*LEVEL:
             enemy_spawn = Enemy(False)
             enemies.append(enemy_spawn)
@@ -352,7 +361,7 @@ while running:
             enemy_spawn.spawn_time = current_time
             ENEMY_COUNT += 1
     
-    if current_time - STAR_GENERATION_TIME >= STAR_DELAY and not player.health <= 0:
+    if current_time - STAR_GENERATION_TIME >= STAR_DELAY and not player.health <= 0 and not PAUSED:
         count = random.randint(3, 5)
         for i in range(count):
             new_star = Star()
@@ -361,14 +370,17 @@ while running:
     
     for star in stars:
         star.draw()
-        star.move()
+        if not PAUSED:
+            star.move()
 
         if star.y > SCREEN_HEIGHT:
             stars.remove(star)
 
     for enemy in enemies:
         enemy.spawn()
-        enemy.move()
+        if not PAUSED:
+            enemy.move()
+
         if current_time - enemy.health_bar_time <= HEALTH_BAR_DELAY:
             enemy.draw_health_bar()
             
@@ -378,7 +390,7 @@ while running:
         if current_time - enemy.crash_time <= EXPLOSION_DELAY:
             screen.blit(blastingImg, (enemy.x+(enemy.width)//2-32, enemy.y+enemy.width-24))
 
-        if (current_time - enemy.last_slime_time >= SLIME_DELAY) and (current_time - enemy.spawn_time >= SLIME_DELAY):
+        if (current_time - enemy.last_slime_time >= SLIME_DELAY) and (current_time - enemy.spawn_time >= SLIME_DELAY) and not PAUSED:
             new_slime = Slime(enemy.x, enemy.y+48, enemy.width)
             slimes.append(new_slime)
             enemy.last_slime_time = current_time
@@ -406,7 +418,8 @@ while running:
 
     for bullet in bullets:
         bullet.draw()
-        bullet.move()
+        if not PAUSED:
+            bullet.move()
         for enemy in enemies:
             if math.sqrt(math.pow((bullet.x+12-(enemy.x+(enemy.width/2)/2)), 2)+math.pow((bullet.y-(enemy.y+enemy.width/2)), 2)) < enemy.width/2:
                 enemy.health -= bullet.damage 
@@ -438,8 +451,10 @@ while running:
             bullets.remove(bullet) 
 
     for slime in slimes:
-        slime.move()
         slime.draw()
+        if not PAUSED:
+            slime.move()
+
         if (math.sqrt(math.pow((slime.x-player.x), 2)+math.pow((slime.y-player.y-24), 2))) < 37 and slime.enemy_width == PLAYER_WIDTH:
             slimes.remove(slime)
             player.health -= slime.damage 
@@ -460,10 +475,11 @@ while running:
         if slime.y > SCREEN_HEIGHT:
             slimes.remove(slime)
 
-    if not player.health == 0:
+    if not player.health <= 0:
         if LEVEL < 6:
-            player.move()
             player.draw()
+            if not PAUSED:
+                player.move()
 
             if current_time - LEVEL_BANNER_TIME <= LEVEL_DELAY:
                 level_banner_rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
@@ -484,6 +500,12 @@ while running:
                 screen.blit(level_indicator,(10, 10))
                 score_indicator_rect.topright = (SCREEN_WIDTH-10, 10)
                 screen.blit(score_indicator, score_indicator_rect)
+
+            if current_time - PLAY_TIME <= PLAY_DELAY and not (current_time - LEVEL_BANNER_TIME <= LEVEL_DELAY):
+                play()
+
+            if PAUSED:
+                pause()
         else:
             you_win()
     else:
