@@ -1,5 +1,6 @@
 import pygame
 import random
+from constants import SCREEN_WIDTH, STAR_SPEED, COLORS
 
 class Star:
     def __init__(self):
@@ -12,5 +13,5 @@ class Star:
     def move(self):
         self.y += self.speed
 
-    def draw(self):
+    def draw(self, screen):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.size)

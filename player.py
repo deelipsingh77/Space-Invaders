@@ -1,8 +1,11 @@
 import pygame
+import sys
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
+from assets import SPACESHIP_IMAGE_PATH, load_image
 
 class Player:
     def __init__(self):
-        self.image = playerImg
+        self.image = load_image(SPACESHIP_IMAGE_PATH)
         self.x = (SCREEN_WIDTH - PLAYER_WIDTH) / 2
         self.y = SCREEN_HEIGHT - PLAYER_HEIGHT - 30
         self.x_change = 0
@@ -21,11 +24,11 @@ class Player:
         self.x = max(0, min(SCREEN_WIDTH - PLAYER_WIDTH, self.x))
         self.y = max(0, min(SCREEN_HEIGHT - PLAYER_HEIGHT, self.y))
 
-    def draw(self):
+    def draw(self, screen):
         screen.blit(self.image, (self.x, self.y))
     
-    def draw_health_bar(self):
-        bar_width = player.width
+    def draw_health_bar(self, screen):
+        bar_width = self.width
         bar_height = 5
         GRAY = (80, 80, 80)
         RED = (180, 0, 0)
