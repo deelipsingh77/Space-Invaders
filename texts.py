@@ -2,7 +2,7 @@ import pygame
 import attributes as atr
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
-pygame.init()
+pygame.font.init()
 
 font = pygame.font.Font("assets/fonts/consolai.ttf", 36)
 font2 = pygame.font.Font("assets/fonts/consola.ttf", 25)
