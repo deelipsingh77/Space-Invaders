@@ -141,14 +141,14 @@ def run_game(screen):
 
         if (JUST_SPAWNED or ((current_time - LAST_SPAWN_TIME) >= SPAWN_DELAY)) and not player.health <= 0 and not (current_time - LEVEL_BANNER_TIME <= LEVEL_DELAY) and not PAUSE_STATE:
             if ENEMY_COUNT < 5*GAME_LEVEL:
-                enemy_spawn = Enemy(False)
+                enemy_spawn = Enemy(False, GAME_LEVEL)
                 enemies.append(enemy_spawn)
                 JUST_SPAWNED = False
                 LAST_SPAWN_TIME  = current_time
                 enemy_spawn.spawn_time = current_time
                 ENEMY_COUNT += 1
             elif ENEMY_COUNT == 5*GAME_LEVEL:
-                enemy_spawn = Enemy(True)
+                enemy_spawn = Enemy(True, GAME_LEVEL)
                 enemies.append(enemy_spawn)
                 LAST_SPAWN_TIME  = current_time
                 enemy_spawn.spawn_time = current_time
