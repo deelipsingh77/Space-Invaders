@@ -30,6 +30,7 @@ STAR_DELAY = 4000
 
 # Level and Progression Constants
 GAME_LEVEL = 1
+ENEMY_COUNT = 0
 ENEMY_SPEED = 0.3
 BOSS_SPEED = 0.3
 STAR_SPEED = 0.05
