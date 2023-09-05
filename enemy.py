@@ -1,25 +1,28 @@
 import pygame
 import random
 import sys
-from constants import BOSS_SPEED, GAME_LEVEL, ENEMY_SPEED, SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
+import attributes as atr
+from constants import SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
 from assets import enemy_img, boss_img
 
 class Enemy:
     def __init__(self, isBoss):
         self.isBoss = isBoss
         if self.isBoss:
+            self.enemy = boss_img[atr.GAME_LEVEL-1] 
             self.height = BOSS_HEIGHT
             self.width = BOSS_WIDTH
-            self.x_change = BOSS_SPEED
-            self.y_change = BOSS_SPEED
-            self.max_health = 1000*GAME_LEVEL
+            self.x_change = atr.BOSS_SPEED
+            self.y_change = atr.BOSS_SPEED
+            self.max_health = 1000*atr.GAME_LEVEL
             self.health = self.max_health
         else:
-            self.x_change = ENEMY_SPEED
-            self.y_change = ENEMY_SPEED
+            self.enemy = random.choice(enemy_img)
+            self.x_change = atr.ENEMY_SPEED
+            self.y_change = atr.ENEMY_SPEED
             self.height = PLAYER_HEIGHT
             self.width = PLAYER_WIDTH
-            self.max_health = 100+(GAME_LEVEL-1)*10
+            self.max_health = 100+(atr.GAME_LEVEL-1)*10
             self.health = self.max_health
         self.x = random.randint(0, SCREEN_WIDTH - self.width)
         self.y = -self.height
@@ -28,17 +31,13 @@ class Enemy:
         self.h_move = False
         self.v_move = True
         self.start = -10
-        self.enemy = random.choice(enemy_img)
         self.explosion_time = sys.float_info.min
         self.defeat_time = sys.float_info.min
         self.crash_time = sys.float_info.min
         self.health_bar_time = sys.float_info.min
 
     def spawn(self, screen):
-        if not self.isBoss:
             screen.blit(self.enemy, (self.x, self.y))
-        else:
-            screen.blit(boss_img[GAME_LEVEL-1], (self.x, self.y))
 
     def move(self):
         if self.v_move:
@@ -55,17 +54,17 @@ class Enemy:
             self.v_move = True
             self.h_move = False
             if self.isBoss:
-                self.x_change = BOSS_SPEED
+                self.x_change = atr.BOSS_SPEED
             else:
-                self.x_change = ENEMY_SPEED
+                self.x_change = atr.ENEMY_SPEED
         elif self.x > SCREEN_WIDTH-self.width:
             self.x = SCREEN_WIDTH-self.width
             self.v_move = True
             self.h_move = False
             if self.isBoss:
-                self.x_change = -BOSS_SPEED
+                self.x_change = -atr.BOSS_SPEED
             else:
-                self.x_change = -ENEMY_SPEED
+                self.x_change = -atr.ENEMY_SPEED
     
     def draw_health_bar(self, screen):
         bar_width = self.width

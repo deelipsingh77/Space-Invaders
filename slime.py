@@ -1,4 +1,5 @@
-from constants import GAME_LEVEL, PLAYER_WIDTH
+import attributes as atr
+from constants import PLAYER_WIDTH
 from assets import slime_img
 
 class Slime:
@@ -8,7 +9,7 @@ class Slime:
         self.y = y
         self.speed = 1
         self.enemy_width = enemy_width
-        self.damage = 10+((GAME_LEVEL-1)/10)
+        self.damage = 10+((atr.GAME_LEVEL-1)/10)
 
     def move(self):
         self.y += self.speed
