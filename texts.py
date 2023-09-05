@@ -19,21 +19,3 @@ game_win_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2)+200)
 game_over_text = font.render("Press Spacebar to Play Again!", True, (255,255,255))
 game_over_rect = game_over_text.get_rect()
 game_over_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2)+200)
-
-def level_indicator(level):
-    return font2.render(f"Level: {level}", True, (255,255,255))
-
-def score_indicator(score, position):
-    score_text = font2.render(f"Score: {score}", True, (255,255,255))
-    score_indicator_rect = score_text.get_rect()
-    if position == "topright":
-        score_indicator_rect.topright = (SCREEN_WIDTH-10, 10)
-    elif position == "center":
-        score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
-    return score_text, score_indicator_rect
-
-def level_banner(level):
-    level_banner_text = font3.render(f"Level {atr.GAME_LEVEL}", True, (255,255,255))
-    level_banner_rect = level_banner_text.get_rect()
-    level_banner_rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
-    return level_banner_text, level_banner_rect

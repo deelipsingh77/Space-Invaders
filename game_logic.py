@@ -10,7 +10,7 @@ from bullet import Bullet
 from enemy import Enemy
 from slime import Slime
 from states import gameover, play, pause, you_win
-from texts import score_indicator, level_indicator, level_banner, health_restored, health_restored_rect
+from texts import health_restored, health_restored_rect, font2, font3
 
 def run_game(screen):
     pygame.display.set_icon(icon_img)
@@ -36,7 +36,11 @@ def run_game(screen):
 
         current_time = pygame.time.get_ticks()
 
-
+        level_indicator =  font2.render(f"Level: {atr.GAME_LEVEL}", True, (255,255,255))
+        score_indicator = font2.render(f"Score: {atr.PLAYER_SCORE}", True, (255,255,255))
+        score_indicator_rect = score_indicator.get_rect()
+        level_banner = font3.render(f"Level {atr.GAME_LEVEL}", True, (255,255,255))
+        level_banner_rect = level_banner.get_rect()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -219,8 +223,8 @@ def run_game(screen):
                     player.move()
 
                 if current_time - atr.LEVEL_BANNER_TIME <= atr.LEVEL_DELAY:
-                    levelBanner, levelBanner_rect = level_banner(atr.GAME_LEVEL)
-                    screen.blit(levelBanner, levelBanner_rect)
+                    level_banner_rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+                    screen.blit(level_banner, level_banner_rect)
                     if not atr.JUST_SPAWNED:
                         screen.blit(health_restored, health_restored_rect)
 
@@ -234,9 +238,9 @@ def run_game(screen):
                     player.y += 10 
 
                 if not (current_time - atr.LEVEL_BANNER_TIME <= atr.LEVEL_DELAY):
-                    score, score_rect = score_indicator(atr.PLAYER_SCORE, "topright")
-                    screen.blit(level_indicator(atr.GAME_LEVEL),(10, 10))
-                    screen.blit(score, score_rect)
+                    score_indicator_rect.topright = (SCREEN_WIDTH-10, 10)
+                    screen.blit(level_indicator,(10, 10))
+                    screen.blit(score_indicator, score_indicator_rect)
 
                 if current_time - atr.PLAY_TIME <= atr.PLAY_DELAY and not (current_time - atr.LEVEL_BANNER_TIME <= atr.LEVEL_DELAY):
                     play(screen)
@@ -245,11 +249,11 @@ def run_game(screen):
                     pause(screen)
             else:
                 you_win(screen, player, enemies, slimes, bullets, defeated)
-                score, score_rect = score_indicator(atr.PLAYER_SCORE, "center")
-                screen.blit(score, score_rect)
+                score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
+                screen.blit(score_indicator, score_indicator_rect)
         else:
             gameover(screen, player, enemies, slimes, bullets, defeated)
-            score, score_rect = score_indicator(atr.PLAYER_SCORE, "center")
-            screen.blit(score, score_rect)
+            score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
+            screen.blit(score_indicator, score_indicator_rect)
 
         pygame.display.update()
