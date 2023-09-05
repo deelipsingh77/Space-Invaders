@@ -1,16 +1,23 @@
-#Constants
+# Screen Constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+
+# Player Constants
 PLAYER_WIDTH = 64
 PLAYER_HEIGHT = 64
+
+# Boss Constants
 BOSS_WIDTH = 128
 BOSS_HEIGHT = 128
+
+# Timing Constants
 LAST_SHOT_TIME = 0
 LAST_SPAWN_TIME = 0
 LEVEL_BANNER_TIME = 0
 PLAY_TIME = 0
-ENEMY_COUNT = 0
-JUST_SPAWNED = True
+STAR_GENERATION_TIME = 0  # Moved STAR_GENERATION_TIME to Timing Constants
+
+# Delays
 FIRE_DELAY = 150
 LEVEL_DELAY = 3000
 SPAWN_DELAY = 5000
@@ -19,14 +26,21 @@ CRASH_DELAY = 100
 HEALTH_BAR_DELAY = 3000
 SLIME_DELAY = 3000
 PLAY_DELAY = 500
-STAR_DELAY = 4000
-ENEMY_COUNT = 0
+STAR_DELAY = 4000  # STAR_DELAY remains here
+
+# Level and Progression Constants
 GAME_LEVEL = 1
 ENEMY_SPEED = 0.3
 BOSS_SPEED = 0.3
-STAR_SPEED = 0.05
+STAR_SPEED = 0.05  # Moved STAR_SPEED to Level and Progression Constants
+
+# Score and Points Constants
 PLAYER_SCORE = 0
-STAR_GENERATION_TIME = 0
+
+# Star Appearance Constants
 COLORS = [(255, 255, 255), (255, 255, 200), (255, 225, 150)]
+
+# Game State Constants
+JUST_SPAWNED = True
 PAUSE_STATE = False
 SHOOT = False
