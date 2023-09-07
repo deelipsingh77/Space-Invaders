@@ -21,9 +21,12 @@ STAR_DELAY = 4000
 # Level and Progression
 GAME_LEVEL = 1
 ENEMY_COUNT = 0
-ENEMY_SPEED = 0.3
-BOSS_SPEED = 0.3
-STAR_SPEED = 0.05
+ENEMY_SPEED = 1 
+BOSS_SPEED = 1
+STAR_SPEED = 0.2
+PLAYER_SPEED = 5
+BULLET_SPEED = 15
+SLIME_SPEED = 5
 
 # Score and Points
 PLAYER_SCORE = 0
@@ -45,8 +48,8 @@ def reset(player, enemies, slimes, bullets, defeated):
     SPAWN_DELAY = 5000
     SLIME_DELAY = 3000
     GAME_LEVEL = 1
-    ENEMY_SPEED = 0.3
-    BOSS_SPEED = 0.3
+    ENEMY_SPEED = 1
+    BOSS_SPEED = 1
     flush(enemies, slimes, bullets, defeated)
 
 def flush(enemies, slimes, bullets, defeated):

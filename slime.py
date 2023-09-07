@@ -7,7 +7,7 @@ class Slime:
         self.image = slime_img
         self.x = x
         self.y = y
-        self.speed = 1
+        self.speed = atr.SLIME_SPEED 
         self.enemy_width = enemy_width
         self.damage = 10+((atr.GAME_LEVEL-1)/10)
 

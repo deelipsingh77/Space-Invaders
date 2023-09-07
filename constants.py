@@ -12,3 +12,6 @@ BOSS_HEIGHT = 128
 
 # Star Appearance Constants
 COLORS = [(255, 255, 255), (255, 255, 200), (255, 225, 150)]
+
+# Frames Per Second
+FPS = 60

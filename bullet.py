@@ -6,7 +6,7 @@ class Bullet:
         self.image = bullet_img 
         self.x = x
         self.y = y
-        self.speed = 5
+        self.speed = atr.BULLET_SPEED
         self.damage = 10+((atr.GAME_LEVEL-1)/10)
 
     def draw(self, screen):

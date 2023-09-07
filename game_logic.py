@@ -14,6 +14,7 @@ from texts import health_restored, health_restored_rect, font2, font3
 
 def run_game(screen):
     pygame.display.set_icon(icon_img)
+    clock = pygame.time.Clock()
     player = Player()
 
     enemies = []
@@ -48,13 +49,13 @@ def run_game(screen):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    player.x_change = -1
+                    player.x_change = -atr.PLAYER_SPEED
                 if event.key == pygame.K_RIGHT:
-                    player.x_change = 1
+                    player.x_change = atr.PLAYER_SPEED
                 if event.key == pygame.K_UP:
-                    player.y_change = -1
+                    player.y_change = -atr.PLAYER_SPEED
                 if event.key == pygame.K_DOWN:
-                    player.y_change = 1
+                    player.y_change = atr.PLAYER_SPEED
                 if event.key == pygame.K_RETURN:
                     if atr.GAME_LEVEL > 5:
                         atr.reset(player, enemies, slimes, bullets, defeated)
@@ -257,3 +258,4 @@ def run_game(screen):
             screen.blit(score_indicator, score_indicator_rect)
 
         pygame.display.update()
+        clock.tick(FPS)
