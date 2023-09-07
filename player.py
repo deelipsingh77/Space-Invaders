@@ -6,7 +6,6 @@ from assets import spaceship_img
 class Player:
     def __init__(self):
         self.rect = spaceship_img.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT-PLAYER_HEIGHT))
-        self.x, self.y = self.rect.center
         self.x_change = 0
         self.y_change = 0
         self.max_health = 100

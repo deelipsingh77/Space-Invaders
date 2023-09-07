@@ -4,7 +4,6 @@ from assets import bullet_img
 class Bullet:
     def __init__(self, points):
         self.rect = bullet_img.get_rect(midtop = points)
-        self.x , self.y = self.rect.center
         self.speed = atr.BULLET_SPEED
         self.damage = 10+((atr.GAME_LEVEL-1)/10)
 

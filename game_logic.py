@@ -1,6 +1,5 @@
 import pygame
 import random
-import math
 import attributes as atr
 from constants import *
 from assets import icon_img, explode_img, blast_img, explode2_img
@@ -9,7 +8,7 @@ from star import Star
 from bullet import Bullet
 from enemy import Enemy
 from slime import Slime
-from states import gameover, play, pause, you_win
+from states import gameover, play, pause, you_win, draw_health_bar
 from texts import health_restored, health_restored_rect, font2, font3
 
 def run_game(screen):
@@ -24,11 +23,10 @@ def run_game(screen):
     stars = []
 
     # Initial Stars
-    for i in range(random.randint(10, 15)):
-        for j in range(random.randint(1, 5)):
-            new_star = Star()
-            new_star.y = random.randint(0, 600)
-            stars.append(new_star)
+    for j in range(random.randint(20, 30)):
+        new_star = Star()
+        new_star.y = random.randint(0, SCREEN_HEIGHT)
+        stars.append(new_star)
 
     running  = True
     while running:
@@ -104,8 +102,7 @@ def run_game(screen):
                 atr.ENEMY_COUNT += 1
         
         if current_time - atr.STAR_GENERATION_TIME >= atr.STAR_DELAY and not player.health <= 0 and not atr.PAUSE_STATE:
-            count = random.randint(3, 5)
-            for i in range(count):
+            for i in range(random.randint(1, 4)):
                 new_star = Star()
                 stars.append(new_star)
                 atr.STAR_GENERATION_TIME = current_time
@@ -115,7 +112,7 @@ def run_game(screen):
             if not atr.PAUSE_STATE:
                 star.move()
 
-            if star.y > SCREEN_HEIGHT:
+            if star.y-star.size/2 > SCREEN_HEIGHT:
                 stars.remove(star)
 
         for enemy in enemies:
@@ -139,7 +136,12 @@ def run_game(screen):
                     new_slime = Slime(enemy.rect.midbottom)
                     slimes.append(new_slime)
                 else:
-                    new_slime = [Slime(enemy.rect.bottomleft), Slime(enemy.rect.midbottom), Slime(enemy.rect.bottomright)]
+                    if atr.GAME_LEVEL == 1:
+                        new_slime = [Slime(enemy.rect.midbottom)]
+                    elif atr.GAME_LEVEL == 2:
+                        new_slime = [Slime((enemy.rect.left + (enemy.rect.centerx-enemy.rect.left)//2, enemy.rect.bottom)), Slime((enemy.rect.centerx + (enemy.rect.right-enemy.rect.centerx)//2, enemy.rect.bottom))]
+                    elif atr.GAME_LEVEL >= 3:
+                        new_slime = [Slime(enemy.rect.bottomleft), Slime(enemy.rect.midbottom), Slime(enemy.rect.bottomright)]
                     slimes.extend(new_slime)
                 enemy.last_slime_time = current_time
 
@@ -180,7 +182,9 @@ def run_game(screen):
                         enemy.defeat_time = current_time
                         defeated.append(enemy)
                         atr.PLAYER_SCORE += enemy.max_health
+                        atr.MINION_COUNT += 1
                         if enemy.isBoss:
+                            atr.MINION_COUNT = 0
                             atr.ENEMY_COUNT = 0
                             atr.GAME_LEVEL += 1
                             atr.SLIME_DELAY = 500 if atr.SLIME_DELAY < 1000 else atr.SLIME_DELAY - 500
@@ -190,8 +194,9 @@ def run_game(screen):
                             player.max_health = 100 + (atr.GAME_LEVEL - 1) * 10
                             player.health_bar_time = current_time
                             atr.LEVEL_BANNER_TIME = current_time
-                            atr.ENEMY_SPEED += 0.1
-                            atr.BOSS_SPEED -= 0.05
+                            atr.ENEMY_SPEED += 0.5
+                            atr.BOSS_SPEED -= 0.1
+                            atr.SLIME_SPEED += 1
                             slimes.clear()
                         enemies.remove(enemy)
 
@@ -236,6 +241,7 @@ def run_game(screen):
                     player.rect.top += 20 
 
                 if not (current_time - atr.LEVEL_BANNER_TIME <= atr.LEVEL_DELAY):
+                    draw_health_bar(screen)
                     screen.blit(level_indicator, level_indicator_rect)
                     screen.blit(score_indicator, score_indicator_rect)
 

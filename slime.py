@@ -5,7 +5,6 @@ from assets import slime_img
 class Slime:
     def __init__(self, enemy):
         self.rect = slime_img.get_rect(midbottom = enemy)
-        self.x, self.y = self.rect.center
         self.speed = atr.SLIME_SPEED 
         self.damage = 10+((atr.GAME_LEVEL-1)/10)
 
