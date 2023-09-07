@@ -2,15 +2,14 @@ import attributes as atr
 from assets import bullet_img
 
 class Bullet:
-    def __init__(self, x, y):
-        self.image = bullet_img 
-        self.x = x
-        self.y = y
+    def __init__(self, points):
+        self.rect = bullet_img.get_rect(midtop = points)
+        self.x , self.y = self.rect.center
         self.speed = atr.BULLET_SPEED
         self.damage = 10+((atr.GAME_LEVEL-1)/10)
 
     def draw(self, screen):
-        screen.blit(self.image, (self.x + 32 - 12, self.y - 15))
+        screen.blit(bullet_img, self.rect)
 
     def move(self):
-        self.y -= self.speed
+        self.rect.top -= self.speed

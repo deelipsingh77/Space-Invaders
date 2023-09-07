@@ -21,7 +21,7 @@ STAR_DELAY = 4000
 # Level and Progression
 GAME_LEVEL = 1
 ENEMY_COUNT = 0
-ENEMY_SPEED = 1 
+ENEMY_SPEED = 1
 BOSS_SPEED = 1
 STAR_SPEED = 0.2
 PLAYER_SPEED = 5
@@ -36,10 +36,9 @@ JUST_SPAWNED = True
 PAUSE_STATE = False
 SHOOT = False
 
-def reset(player, enemies, slimes, bullets, defeated):
+def reset(player, enemies, slimes, bullets):
     global LAST_SHOT_TIME, LAST_SPAWN_TIME, ENEMY_COUNT, JUST_SPAWNED, FIRE_DELAY, SPAWN_DELAY, SLIME_DELAY, GAME_LEVEL, ENEMY_SPEED, BOSS_SPEED
-    player.x = (SCREEN_WIDTH-PLAYER_WIDTH)/2
-    player.y = (SCREEN_HEIGHT-PLAYER_HEIGHT)-30
+    player.rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT-PLAYER_HEIGHT)
     LAST_SHOT_TIME = 0
     LAST_SPAWN_TIME = 0
     ENEMY_COUNT = 0
@@ -50,10 +49,9 @@ def reset(player, enemies, slimes, bullets, defeated):
     GAME_LEVEL = 1
     ENEMY_SPEED = 1
     BOSS_SPEED = 1
-    flush(enemies, slimes, bullets, defeated)
+    flush(enemies, slimes, bullets)
 
-def flush(enemies, slimes, bullets, defeated):
+def flush(enemies, slimes, bullets):
     enemies.clear()
     slimes.clear()
     bullets.clear()
-    defeated.clear()

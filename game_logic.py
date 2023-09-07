@@ -38,10 +38,11 @@ def run_game(screen):
         current_time = pygame.time.get_ticks()
 
         level_indicator =  font2.render(f"Level: {atr.GAME_LEVEL}", True, (255,255,255))
+        level_indicator_rect = level_indicator.get_rect(topleft = (10, 10))
         score_indicator = font2.render(f"Score: {atr.PLAYER_SCORE}", True, (255,255,255))
-        score_indicator_rect = score_indicator.get_rect()
+        score_indicator_rect = score_indicator.get_rect(topright = (SCREEN_WIDTH-10, 10))
         level_banner = font3.render(f"Level {atr.GAME_LEVEL}", True, (255,255,255))
-        level_banner_rect = level_banner.get_rect()
+        level_banner_rect = level_banner.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -83,7 +84,7 @@ def run_game(screen):
                     atr.SHOOT = False
 
         if current_time - atr.LAST_SHOT_TIME >= atr.FIRE_DELAY and not player.health <= 0 and atr.SHOOT:
-            new_bullet = Bullet(player.x, player.y)
+            new_bullet = Bullet(player.rect.midtop)
             bullets.append(new_bullet)
             atr.LAST_SHOT_TIME = current_time
 
@@ -126,34 +127,39 @@ def run_game(screen):
                 enemy.draw_health_bar(screen)
                 
             if current_time - enemy.explosion_time <= atr.EXPLOSION_DELAY:
-                screen.blit(explode_img, (enemy.x+(enemy.width)//2-12, enemy.y+(enemy.width)//2-12))
+                explode_img_rect = explode_img.get_rect(center = enemy.rect.center)
+                screen.blit(explode_img, explode_img_rect)
 
             if current_time - enemy.crash_time <= atr.EXPLOSION_DELAY:
-                screen.blit(blast_img, (enemy.x+(enemy.width)//2-32, enemy.y+enemy.width-24))
+                blast_img_rect = blast_img.get_rect(midtop = enemy.rect.midbottom)
+                screen.blit(blast_img, blast_img_rect)
 
             if (current_time - enemy.last_slime_time >= atr.SLIME_DELAY) and (current_time - enemy.spawn_time >= atr.SLIME_DELAY) and not atr.PAUSE_STATE:
-                new_slime = Slime(enemy.x, enemy.y+48, enemy.width)
-                slimes.append(new_slime)
+                if not enemy.isBoss:
+                    new_slime = Slime(enemy.rect.midbottom)
+                    slimes.append(new_slime)
+                else:
+                    new_slime = [Slime(enemy.rect.bottomleft), Slime(enemy.rect.midbottom), Slime(enemy.rect.bottomright)]
+                    slimes.extend(new_slime)
                 enemy.last_slime_time = current_time
 
-            if math.sqrt(math.pow((enemy.x-player.x), 2)+math.pow((enemy.y-player.y), 2)) < 50 and not enemy.isBoss:
+            if player.rect.colliderect(enemy.rect):
                 enemy.crash_time = current_time
                 player.crash_time = current_time
                 player.health -= 10
                 player.health_bar_time = current_time
-            elif math.sqrt(math.pow((enemy.x+32-player.x), 2)+math.pow((enemy.y+32-player.y), 2)) < 100 and enemy.isBoss:
-                enemy.crash_time = current_time
-                player.crash_time = current_time
-                player.health -= 10
-                player.health_bar_time = current_time
+                if player.health <= 0:
+                    player.defeat_time = current_time
+                    defeated.append(player)
             
-            if enemy.y > SCREEN_HEIGHT:
+            if enemy.rect.bottom > SCREEN_HEIGHT:
                 player.health = 0
                 enemies.remove(enemy)
         
         for defeat in defeated:
             if current_time - defeat.defeat_time <= atr.EXPLOSION_DELAY:
-                screen.blit(explode2_img, (defeat.x+(defeat.width)//2-32, defeat.y+(defeat.width)//2-32))
+                explode2_img_rect = explode2_img.get_rect(center = defeat.rect.center)
+                screen.blit(explode2_img, explode2_img_rect)
             else:
                 defeated.remove(defeat)
 
@@ -162,7 +168,7 @@ def run_game(screen):
             if not atr.PAUSE_STATE:
                 bullet.move()
             for enemy in enemies:
-                if math.sqrt(math.pow((bullet.x+12-(enemy.x+(enemy.width/2)/2)), 2)+math.pow((bullet.y-(enemy.y+(enemy.width/2))), 2)) < enemy.width/2:
+                if bullet.rect.colliderect(enemy.rect):
                     enemy.health -= bullet.damage 
                     enemy.explosion_time = current_time
                     enemy.health_bar_time = current_time
@@ -189,7 +195,7 @@ def run_game(screen):
                             slimes.clear()
                         enemies.remove(enemy)
 
-            if (bullet in bullets) and (bullet.y < 0):
+            if (bullet in bullets) and (bullet.rect.bottom < 0):
                 bullets.remove(bullet) 
 
         for slime in slimes:
@@ -197,34 +203,25 @@ def run_game(screen):
             if not atr.PAUSE_STATE:
                 slime.move()
 
-            if (math.sqrt(math.pow((slime.x-player.x), 2)+math.pow((slime.y-player.y-24), 2))) < 37 and slime.enemy_width == PLAYER_WIDTH:
+            if slime.rect.colliderect(player.rect):
                 slimes.remove(slime)
                 player.health -= slime.damage 
                 player.explosion_time = current_time
                 player.health_bar_time = current_time
-                if player.health == 0:
-                    player.defeat_time = current_time
-                    defeated.append(player)
-            elif (math.sqrt(math.pow((slime.x-player.x+32), 2)+math.pow((slime.y-player.y-50), 2))) < 60 and slime.enemy_width == BOSS_WIDTH:
-                slimes.remove(slime)
-                player.health -= 10
-                player.explosion_time = current_time
-                player.health_bar_time = current_time
-                if player.health == 0:
+                if player.health <= 0:
                     player.defeat_time = current_time
                     defeated.append(player)
 
-            if slime.y > SCREEN_HEIGHT:
+            if (slime in slimes) and (slime.rect.top > SCREEN_HEIGHT):
                 slimes.remove(slime)
 
-        if not player.health <= 0:
+        if player.health > 0:
             if atr.GAME_LEVEL < 6:
                 player.draw(screen)
                 if not atr.PAUSE_STATE:
                     player.move()
 
                 if current_time - atr.LEVEL_BANNER_TIME <= atr.LEVEL_DELAY:
-                    level_banner_rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
                     screen.blit(level_banner, level_banner_rect)
                     if not atr.JUST_SPAWNED:
                         screen.blit(health_restored, health_restored_rect)
@@ -233,14 +230,13 @@ def run_game(screen):
                     player.draw_health_bar(screen)
 
                 if current_time - player.explosion_time <= atr.EXPLOSION_DELAY:
-                    screen.blit(explode_img, (player.x+(PLAYER_WIDTH)//2-12, player.y+(PLAYER_WIDTH)//2-12))
+                    screen.blit(explode_img, player.rect)
 
                 if current_time - player.crash_time <= atr.CRASH_DELAY:
-                    player.y += 10 
+                    player.rect.top += 20 
 
                 if not (current_time - atr.LEVEL_BANNER_TIME <= atr.LEVEL_DELAY):
-                    score_indicator_rect.topright = (SCREEN_WIDTH-10, 10)
-                    screen.blit(level_indicator,(10, 10))
+                    screen.blit(level_indicator, level_indicator_rect)
                     screen.blit(score_indicator, score_indicator_rect)
 
                 if current_time - atr.PLAY_TIME <= atr.PLAY_DELAY and not (current_time - atr.LEVEL_BANNER_TIME <= atr.LEVEL_DELAY):
@@ -249,11 +245,11 @@ def run_game(screen):
                 if atr.PAUSE_STATE:
                     pause(screen)
             else:
-                you_win(screen, player, enemies, slimes, bullets, defeated)
+                you_win(screen)
                 score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
                 screen.blit(score_indicator, score_indicator_rect)
         else:
-            gameover(screen, player, enemies, slimes, bullets, defeated)
+            gameover(screen, player, enemies, slimes, bullets)
             score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
             screen.blit(score_indicator, score_indicator_rect)
 
