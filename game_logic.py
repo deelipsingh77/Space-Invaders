@@ -195,8 +195,8 @@ def run_game(screen):
                             player.health_bar_time = current_time
                             atr.LEVEL_BANNER_TIME = current_time
                             atr.ENEMY_SPEED += 0.5
-                            atr.BOSS_SPEED -= 0.1
-                            atr.SLIME_SPEED += 1
+                            atr.BOSS_SPEED -= 0.15
+                            atr.SLIME_SPEED += 0.5
                             slimes.clear()
                         enemies.remove(enemy)
 
