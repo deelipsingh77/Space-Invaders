@@ -17,4 +17,3 @@ def pause(screen):
 def you_win(screen, player, enemies, slimes, bullets, defeated):
     screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
     screen.blit(game_win_text,game_win_rect)
-    atr.reset(player, enemies, slimes, bullets, defeated)
