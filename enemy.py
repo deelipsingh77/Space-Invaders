@@ -25,7 +25,7 @@ class Enemy:
             self.y_change = atr.ENEMY_SPEED
             self.max_health = 100+(atr.GAME_LEVEL-1)*10
             self.health = self.max_health
-            self.rect = self.enemy.get_rect(midbottom = (random.randint(0, SCREEN_WIDTH - self.width/2), 0))
+            self.rect = self.enemy.get_rect(bottomright = (random.randint(self.width, SCREEN_WIDTH), 0))
         self.start = self.rect.top
         self.last_slime_time = 0
         self.spawn_time = 0
@@ -41,8 +41,8 @@ class Enemy:
 
     def move(self):
         if self.v_move:
-            self.rect.bottom += self.y_change
-            if self.rect.top - self.start > (self.height+20 if not self.isBoss else self.height + 12):
+            self.rect.top += self.y_change
+            if self.rect.top - self.start >= self.height + 15:
                 self.v_move = False
                 self.h_move = True
                 self.start = self.rect.top
