@@ -105,8 +105,7 @@ def run_game(screen):
 
             if (current_time - enemy.last_slime_time >= Slime.SLIME_DELAY) and (current_time - enemy.spawn_time >= Slime.SLIME_DELAY) and not states.PAUSE_STATE:
                 if not enemy.isBoss:
-                    new_slime = Slime(enemy.rect.midbottom)
-                    slimes.append(new_slime)
+                    slimes.append(Slime(enemy.rect.midbottom))
                 else:
                     if states.GAME_LEVEL == 1:
                         new_slime = [Slime(enemy.rect.midbottom)]
