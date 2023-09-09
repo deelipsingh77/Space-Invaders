@@ -10,6 +10,7 @@ from enemy import Enemy
 from slime import Slime
 from states import gameover, play, pause, you_win
 from texts import health_restored, health_restored_rect, font2, font3
+from events import handle_keydown_event, handle_keyup_event
 
 def run_game(screen):
     pygame.display.set_icon(icon_img)
@@ -23,7 +24,7 @@ def run_game(screen):
     stars = []
 
     # Initial Stars
-    for j in range(random.randint(20, 30)):
+    for _ in range(random.randint(20, 30)):
         new_star = Star()
         new_star.y = random.randint(0, 600)
         stars.append(new_star)
@@ -47,46 +48,17 @@ def run_game(screen):
                 running = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    player.x_change = -Player.PLAYER_SPEED
-                if event.key == pygame.K_RIGHT:
-                    player.x_change = Player.PLAYER_SPEED
-                if event.key == pygame.K_UP:
-                    player.y_change = -Player.PLAYER_SPEED
-                if event.key == pygame.K_DOWN:
-                    player.y_change = Player.PLAYER_SPEED
-                if event.key == pygame.K_RETURN:
-                    if states.GAME_LEVEL > 5:
-                        states.reset(player, enemies, slimes, bullets)
-
-                if event.key == pygame.K_ESCAPE:
-                    if states.GAME_LEVEL < 6 and player.health > 0:
-                        if states.PAUSE_STATE:
-                            states.PLAY_TIME = current_time
-                            states.PAUSE_STATE = False
-                        else:
-                            states.PAUSE_STATE = True
-                if event.key == pygame.K_SPACE:
-                    if player.health <= 0:
-                        player.health = 100
-                        Player.PLAYER_SCORE = 0
-                    elif player.health > 0 and states.GAME_LEVEL < 6:
-                        Bullet.SHOOT = True
+                handle_keydown_event(event.key, player, current_time, bullets, enemies, slimes)
 
             if event.type == pygame.KEYUP:
-                if event.key in (pygame.K_LEFT, pygame.K_RIGHT):
-                    player.x_change = 0
-                elif event.key in (pygame.K_UP, pygame.K_DOWN):
-                    player.y_change = 0
-                elif event.key == pygame.K_SPACE:
-                    Bullet.SHOOT = False
+                handle_keyup_event(event.key, player)
 
         if current_time - Bullet.LAST_SHOT_TIME >= Bullet.FIRE_DELAY and not player.health <= 0 and Bullet.SHOOT:
             new_bullet = Bullet(player.rect.midtop)
             bullets.append(new_bullet)
             Bullet.LAST_SHOT_TIME = current_time
 
-        if (Enemy.JUST_SPAWNED or ((current_time - Enemy.LAST_SPAWN_TIME) >= Enemy.SPAWN_DELAY)) and not player.health <= 0 and not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY) and not states.PAUSE_STATE and not states.WIN_STATE:
+        if (Enemy.JUST_SPAWNED or (current_time - Enemy.LAST_SPAWN_TIME >= Enemy.SPAWN_DELAY)) and not (player.health <= 0 or current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY or states.PAUSE_STATE or states.WIN_STATE):
             if Enemy.ENEMY_COUNT < 5*states.GAME_LEVEL:
                 enemy_spawn = Enemy(False)
                 enemies.append(enemy_spawn)

@@ -46,3 +46,17 @@ class Player:
         if self.health != self.max_health:
             pygame.draw.rect(screen, GRAY, (self.rect.left, self.rect.bottom + 10, bar_width, bar_height))
             pygame.draw.rect(screen, COLOR, (self.rect.left, self.rect.bottom + 10, health_width, bar_height))
+
+    def move_left(self):
+        self.x_change = -Player.PLAYER_SPEED
+    def move_right(self):
+        self.x_change = Player.PLAYER_SPEED
+    def move_up(self):
+        self.y_change = -Player.PLAYER_SPEED
+    def move_down(self):
+        self.y_change = Player.PLAYER_SPEED
+
+    def stop_x(self):
+        self.x_change = 0
+    def stop_y(self):
+        self.y_change = 0

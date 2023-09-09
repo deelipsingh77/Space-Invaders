@@ -57,6 +57,15 @@ def play(screen):
 def pause(screen):
     screen.blit(pause_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
+def toggle_pause(player, current_time):
+    if GAME_LEVEL < 6 and player.health > 0:
+        if states.PAUSE_STATE:
+            states.PLAY_TIME = current_time
+            states.PAUSE_STATE = False
+        else:
+            states.PAUSE_STATE = True
+
+
 def you_win(screen, *entities):
     states.WIN_STATE = True
     flush(*entities)
@@ -66,7 +75,6 @@ def you_win(screen, *entities):
     screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
     screen.blit(game_win_text,game_win_rect)
     screen.blit(score_indicator, score_indicator_rect)
-
 
 def draw_progress_bar(screen):
     bar_height = 200

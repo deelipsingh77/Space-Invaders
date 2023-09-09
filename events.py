@@ -1,0 +1,30 @@
+from bullet import Bullet
+from pygame.locals import K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN, K_ESCAPE, K_SPACE
+from states import toggle_pause, reset
+
+def handle_keydown_event(key, player, current_time, bullets, *entities):
+    key_actions = {
+        K_LEFT: lambda: player.move_left(),
+        K_RIGHT: lambda: player.move_right(),
+        K_UP: lambda: player.move_up(),
+        K_DOWN: lambda: player.move_down(),
+        K_RETURN: lambda: reset(player, bullets, *entities),
+        K_ESCAPE: lambda: toggle_pause(player, current_time),
+        K_SPACE: lambda: Bullet.fire(player)
+    }
+    action = key_actions.get(key)
+    if action:
+        action()
+
+def handle_keyup_event(key, player):
+    key_actions = {
+        K_LEFT: lambda: player.stop_x(),
+        K_RIGHT: lambda: player.stop_x(),
+        K_UP: lambda: player.stop_y(),
+        K_DOWN: lambda: player.stop_y(),
+        K_SPACE: lambda: Bullet.hold_fire()
+    }
+
+    action = key_actions.get(key)
+    if action:
+        action()

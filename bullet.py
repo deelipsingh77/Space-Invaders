@@ -19,3 +19,13 @@ class Bullet:
 
     def move(self):
         self.rect.top -= self.speed
+    
+    def fire(player):
+        if player.health <= 0:
+            player.health = 100
+            player.PLAYER_SCORE = 0
+        elif player.health > 0 and states.GAME_LEVEL < 6:
+            Bullet.SHOOT = True
+
+    def hold_fire():
+        Bullet.SHOOT = False

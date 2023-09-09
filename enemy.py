@@ -8,7 +8,7 @@ from assets import enemy_img, boss_img
 class Enemy:
     JUST_SPAWNED = True
     SPAWN_DELAY = 5000
-    LAST_SPAWN_TIME = 0
+    LAST_SPAWN_TIME = sys.float_info.max
     ENEMY_COUNT = 0
     ENEMY_DESTROYED = 0
     ENEMY_SPEED = 1
@@ -34,10 +34,10 @@ class Enemy:
             self.health = self.max_health
         self.rect = self.enemy.get_rect(midbottom = (random.randint(0, SCREEN_WIDTH - self.width/2), 0))
         self.start = self.rect.top
-        self.last_slime_time = 0
-        self.spawn_time = 0
         self.h_move = False
         self.v_move = True
+        self.last_slime_time = 0
+        self.spawn_time = 0
         self.explosion_time = sys.float_info.min
         self.defeat_time = sys.float_info.min
         self.crash_time = sys.float_info.min
