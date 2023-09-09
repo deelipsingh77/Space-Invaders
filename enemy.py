@@ -12,7 +12,7 @@ class Enemy:
     ENEMY_COUNT = 0
     ENEMY_DESTROYED = 0
     ENEMY_SPEED = 1
-    BOSS_SPEED = 1
+    BOSS_SPEED = 0.8
 
     def __init__(self, isBoss):
         self.isBoss = isBoss
@@ -49,7 +49,7 @@ class Enemy:
     def move(self):
         if self.v_move:
             self.rect.bottom += self.y_change
-            if self.rect.top - self.start > (self.height+20 if not self.isBoss else self.height):
+            if self.rect.top - self.start > self.height+15:
                 self.v_move = False
                 self.h_move = True
                 self.start = self.rect.top

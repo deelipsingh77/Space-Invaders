@@ -5,7 +5,7 @@ from constants import SCREEN_WIDTH, COLORS
 class Star:
     STAR_GENERATION_TIME = 0
     STAR_DELAY = 4000
-    STAR_SPEED = 0.2
+    STAR_SPEED = 0.4
 
     def __init__(self):
         self.size = random.randint(1, 3)

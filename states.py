@@ -42,14 +42,14 @@ def flush(*entities):
     for entity in entities:
         entity.clear()
 
-def gameover(screen, player, enemies, slimes, bullets):
+def gameover(screen, player, *entities):
     score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
     score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
 
     screen.blit(gameover_img, ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
     screen.blit(game_over_text,game_over_rect)
     screen.blit(score_indicator, score_indicator_rect)
-    states.reset(player, enemies, slimes, bullets)
+    states.reset(player, *entities)
 
 def play(screen):
     screen.blit(play_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
