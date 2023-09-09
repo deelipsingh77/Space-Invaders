@@ -1,5 +1,4 @@
 import pygame
-import attributes as atr
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 pygame.font.init()

@@ -4,6 +4,10 @@ from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
 from assets import spaceship_img
 
 class Player:
+    CRASH_DELAY = 100
+    PLAYER_SPEED = 5
+    PLAYER_SCORE = 0
+
     def __init__(self):
         self.rect = spaceship_img.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT-PLAYER_HEIGHT))
         self.x_change = 0
@@ -41,3 +45,17 @@ class Player:
         if self.health != self.max_health:
             pygame.draw.rect(screen, GRAY, (self.rect.left, self.rect.bottom + 10, bar_width, bar_height))
             pygame.draw.rect(screen, COLOR, (self.rect.left, self.rect.bottom + 10, health_width, bar_height))
+
+    def move_left(self):
+        self.x_change = -Player.PLAYER_SPEED
+    def move_right(self):
+        self.x_change = Player.PLAYER_SPEED
+    def move_up(self):
+        self.y_change = -Player.PLAYER_SPEED
+    def move_down(self):
+        self.y_change = Player.PLAYER_SPEED
+
+    def stop_x(self):
+        self.x_change = 0
+    def stop_y(self):
+        self.y_change = 0
