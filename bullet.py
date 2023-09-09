@@ -3,7 +3,7 @@ from assets import bullet_img
 
 class Bullet:
     LAST_SHOT_TIME = 0
-    FIRE_DELAY = 150
+    FIRE_DELAY = 130
     BULLET_SPEED = 15
     SHOOT = False
     EXPLOSION_DELAY = 100

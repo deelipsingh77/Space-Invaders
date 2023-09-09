@@ -180,18 +180,19 @@ def run_game(screen):
                         Player.PLAYER_SCORE += enemy.max_health
                         Enemy.ENEMY_DESTROYED += 1
                         if enemy.isBoss:
+                            states.GAME_LEVEL += 1
                             Enemy.ENEMY_COUNT = 0
                             Enemy.ENEMY_DESTROYED = 0
-                            states.GAME_LEVEL += 1
                             Slime.SLIME_DELAY = 500 if Slime.SLIME_DELAY < 1000 else Slime.SLIME_DELAY - 500
                             Enemy.SPAWN_DELAY = 500 if Enemy.SPAWN_DELAY < 1000 else Enemy.SPAWN_DELAY - 500
                             Bullet.FIRE_DELAY -= (states.GAME_LEVEL-1)*10
                             player.health = 100 + (states.GAME_LEVEL - 1) * 10
                             player.max_health = 100 + (states.GAME_LEVEL - 1) * 10
+                            Enemy.ENEMY_SPEED += 0.2
+                            Enemy.BOSS_SPEED -= 0.1
+                            Slime.SLIME_SPEED += 0.5
                             player.health_bar_time = current_time
                             states.LEVEL_BANNER_TIME = current_time
-                            Enemy.ENEMY_SPEED += 0.1
-                            Enemy.BOSS_SPEED -= 0.05
                             slimes.clear()
                         enemies.remove(enemy)
 
@@ -216,7 +217,7 @@ def run_game(screen):
                 slimes.remove(slime)
 
         if player.health > 0:
-            if states.GAME_LEVEL < 6:
+            if states.GAME_LEVEL < 5:
                 player.draw(screen)
                 if not states.PAUSE_STATE:
                     player.move()
@@ -247,12 +248,8 @@ def run_game(screen):
                     pause(screen)
             else:
                 you_win(screen)
-                score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
-                screen.blit(score_indicator, score_indicator_rect)
         else:
             gameover(screen, player, enemies, slimes, bullets)
-            score_indicator_rect.center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250)
-            screen.blit(score_indicator, score_indicator_rect)
 
         pygame.display.update()
         clock.tick(FPS)

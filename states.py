@@ -1,9 +1,10 @@
 import pygame
 import states
+from player import Player
 from bullet import Bullet
 from slime import Slime
 from enemy import Enemy
-from texts import game_over_text, game_over_rect, game_win_text, game_win_rect
+from texts import game_over_text, game_over_rect, game_win_text, game_win_rect, font2
 from assets import gameover_img, play_img, pause_img, youwin_img
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT
 
@@ -42,8 +43,12 @@ def flush(enemies, slimes, bullets):
     bullets.clear()
 
 def gameover(screen, player, enemies, slimes, bullets):
+    score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
+    score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
+
     screen.blit(gameover_img, ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
     screen.blit(game_over_text,game_over_rect)
+    screen.blit(score_indicator, score_indicator_rect)
     states.reset(player, enemies, slimes, bullets)
 
 def play(screen):
@@ -53,8 +58,13 @@ def pause(screen):
     screen.blit(pause_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def you_win(screen):
+    score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
+    score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
+
     screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
     screen.blit(game_win_text,game_win_rect)
+    screen.blit(score_indicator, score_indicator_rect)
+
 
 def draw_progress_bar(screen):
     bar_height = 200
