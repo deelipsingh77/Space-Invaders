@@ -18,12 +18,13 @@ game_win_rect = game_win_text.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT
 game_over_text = font.render("Press Spacebar to Play Again!", True, (255,255,255))
 game_over_rect = game_over_text.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2)+200))
 
-def level_display(screen):
-    level_banner = font3.render(f"Level {states.GAME_LEVEL}", True, (255,255,255))
-    level_banner_rect = level_banner.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
-    screen.blit(level_banner, level_banner_rect)
-    if not Enemy.JUST_SPAWNED:
-        screen.blit(health_restored, health_restored_rect)
+def level_display(screen, current_time):
+    if current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY:
+        level_banner = font3.render(f"Level {states.GAME_LEVEL}", True, (255,255,255))
+        level_banner_rect = level_banner.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
+        screen.blit(level_banner, level_banner_rect)
+        if not Enemy.JUST_SPAWNED:
+            screen.blit(health_restored, health_restored_rect)
 
 def hud_display(screen):
     level_indicator =  font2.render(f"Level: {states.GAME_LEVEL}", True, (255,255,255))

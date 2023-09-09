@@ -1,10 +1,11 @@
-import pygame
 import random
 import states
 import sys
 from constants import SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH, SCREEN_HEIGHT
-from assets import enemy_img, boss_img, explode_img, blast_img, explode2_img
+from assets import enemy_img, boss_img, blast_img, explode2_img
+from images import damage_display
 from slime import Slime
+from healthbar import health_bar_display
 
 class Enemy:
     JUST_SPAWNED = True
@@ -16,6 +17,7 @@ class Enemy:
     BOSS_SPEED = 0.8
 
     def __init__(self, isBoss):
+        self.isPlayer = False
         self.isBoss = isBoss
         if self.isBoss:
             self.enemy = boss_img[states.GAME_LEVEL-1] 
@@ -68,22 +70,6 @@ class Enemy:
             self.h_move = False
             self.x_change = -self.x_change 
     
-    def draw_health_bar(self, screen):
-        bar_width = self.width
-        bar_height = 5
-        GRAY = (80, 80, 80)
-        RED = (180, 0, 0)
-        GREEN = (0, 180, 100)
-        if (self.health / self.max_health)*100 < 25:
-            COLOR = RED
-        else:
-            COLOR = GREEN
-        
-        health_width = (self.health / self.max_health) * bar_width
-        if self.health != self.max_health:
-            pygame.draw.rect(screen, GRAY, (self.rect.left , self.rect.top-10, bar_width, bar_height))
-            pygame.draw.rect(screen, COLOR, (self.rect.left, self.rect.top-10, health_width, bar_height))
-
     @staticmethod
     def update_enemy(screen, player, current_time, enemies, slimes, defeated):
         for enemy in enemies:
@@ -91,12 +77,8 @@ class Enemy:
             if not states.PAUSE_STATE:
                 enemy.move()
 
-            if current_time - enemy.health_bar_time <= states.HEALTH_BAR_DELAY:
-                enemy.draw_health_bar(screen)
-                
-            if current_time - enemy.explosion_time <= states.EXPLOSION_DELAY:
-                explode_img_rect = explode_img.get_rect(center = enemy.rect.center)
-                screen.blit(explode_img, explode_img_rect)
+            health_bar_display(screen, enemy, current_time)
+            damage_display(screen, enemy, current_time)
 
             if current_time - enemy.crash_time <= states.EXPLOSION_DELAY:
                 blast_img_rect = blast_img.get_rect(midtop = enemy.rect.midbottom)
