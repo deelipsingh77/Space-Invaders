@@ -57,7 +57,7 @@ def run_game(screen):
                     player.y_change = Player.PLAYER_SPEED
                 if event.key == pygame.K_RETURN:
                     if states.GAME_LEVEL > 5:
-                        states.reset(player, enemies, slimes, bullets, defeated)
+                        states.reset(player, enemies, slimes, bullets)
 
                 if event.key == pygame.K_ESCAPE:
                     if states.GAME_LEVEL < 6 and player.health > 0:
@@ -86,7 +86,7 @@ def run_game(screen):
             bullets.append(new_bullet)
             Bullet.LAST_SHOT_TIME = current_time
 
-        if (Enemy.JUST_SPAWNED or ((current_time - Enemy.LAST_SPAWN_TIME) >= Enemy.SPAWN_DELAY)) and not player.health <= 0 and not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY) and not states.PAUSE_STATE:
+        if (Enemy.JUST_SPAWNED or ((current_time - Enemy.LAST_SPAWN_TIME) >= Enemy.SPAWN_DELAY)) and not player.health <= 0 and not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY) and not states.PAUSE_STATE and not states.WIN_STATE:
             if Enemy.ENEMY_COUNT < 5*states.GAME_LEVEL:
                 enemy_spawn = Enemy(False)
                 enemies.append(enemy_spawn)
@@ -102,8 +102,7 @@ def run_game(screen):
                 Enemy.ENEMY_COUNT += 1
         
         if current_time - Star.STAR_GENERATION_TIME >= Star.STAR_DELAY and not player.health <= 0 and not states.PAUSE_STATE:
-            count = random.randint(3, 5)
-            for i in range(count):
+            for i in range(random.randint(1, 4)):
                 new_star = Star()
                 stars.append(new_star)
                 Star.STAR_GENERATION_TIME = current_time
@@ -217,7 +216,7 @@ def run_game(screen):
                 slimes.remove(slime)
 
         if player.health > 0:
-            if states.GAME_LEVEL < 5:
+            if states.GAME_LEVEL < 6:
                 player.draw(screen)
                 if not states.PAUSE_STATE:
                     player.move()
@@ -247,7 +246,7 @@ def run_game(screen):
                 if states.PAUSE_STATE:
                     pause(screen)
             else:
-                you_win(screen)
+                you_win(screen, enemies, slimes, bullets)
         else:
             gameover(screen, player, enemies, slimes, bullets)
 

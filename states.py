@@ -22,8 +22,9 @@ GAME_LEVEL = 1
 
 # Game State
 PAUSE_STATE = False
+WIN_STATE = False
 
-def reset(player, enemies, slimes, bullets):
+def reset(player, *entities):
     player.rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT-PLAYER_HEIGHT)
     states.GAME_LEVEL = 1
     Bullet.LAST_SHOT_TIME = 0
@@ -35,12 +36,11 @@ def reset(player, enemies, slimes, bullets):
     Enemy.LAST_SPAWN_TIME = 0
     Enemy.ENEMY_SPEED = 1
     Enemy.BOSS_SPEED = 1
-    flush(enemies, slimes, bullets)
+    flush(*entities)
 
-def flush(enemies, slimes, bullets):
-    enemies.clear()
-    slimes.clear()
-    bullets.clear()
+def flush(*entities):
+    for entity in entities:
+        entity.clear()
 
 def gameover(screen, player, enemies, slimes, bullets):
     score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
@@ -57,7 +57,9 @@ def play(screen):
 def pause(screen):
     screen.blit(pause_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
-def you_win(screen):
+def you_win(screen, *entities):
+    states.WIN_STATE = True
+    flush(*entities)
     score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
     score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
 
