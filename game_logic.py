@@ -84,7 +84,7 @@ def run_game(screen):
             if not states.PAUSE_STATE:
                 star.move()
 
-            if star.y-star.size/2 > SCREEN_HEIGHT:
+            if star.y > SCREEN_HEIGHT:
                 stars.remove(star)
 
         for enemy in enemies:

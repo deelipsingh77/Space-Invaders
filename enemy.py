@@ -24,7 +24,6 @@ class Enemy:
             self.y_change = Enemy.BOSS_SPEED
             self.max_health = 1000*states.GAME_LEVEL
             self.health = self.max_health
-            self.rect = self.enemy.get_rect(midbottom = (SCREEN_WIDTH//2, 0))
         else:
             self.enemy = random.choice(enemy_img)
             self.height = PLAYER_HEIGHT
@@ -33,7 +32,7 @@ class Enemy:
             self.y_change = Enemy.ENEMY_SPEED
             self.max_health = 100+(states.GAME_LEVEL-1)*10
             self.health = self.max_health
-            self.rect = self.enemy.get_rect(bottomright = (random.randint(self.width, SCREEN_WIDTH), 0))
+        self.rect = self.enemy.get_rect(midbottom = (random.randint(0, SCREEN_WIDTH - self.width/2), 0))
         self.start = self.rect.top
         self.h_move = False
         self.v_move = True
