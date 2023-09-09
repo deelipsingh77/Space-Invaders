@@ -1,3 +1,4 @@
+import pygame
 import states
 from bullet import Bullet
 from slime import Slime
@@ -54,3 +55,12 @@ def pause(screen):
 def you_win(screen):
     screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
     screen.blit(game_win_text,game_win_rect)
+
+def draw_progress_bar(screen):
+    bar_height = 200
+    bar_width = 5
+    GRAY = (80, 80, 80)
+    GREEN = (0, 180, 100)
+    level_height = (Enemy.ENEMY_DESTROYED/(5*GAME_LEVEL)) * bar_height
+    pygame.draw.rect(screen, GRAY, (0 , 200, bar_width, bar_height))
+    pygame.draw.rect(screen, GREEN, (0, 400-round(level_height), bar_width, level_height))

@@ -178,8 +178,10 @@ def run_game(screen):
                         enemy.defeat_time = current_time
                         defeated.append(enemy)
                         Player.PLAYER_SCORE += enemy.max_health
+                        Enemy.ENEMY_DESTROYED += 1
                         if enemy.isBoss:
                             Enemy.ENEMY_COUNT = 0
+                            Enemy.ENEMY_DESTROYED = 0
                             states.GAME_LEVEL += 1
                             Slime.SLIME_DELAY = 500 if Slime.SLIME_DELAY < 1000 else Slime.SLIME_DELAY - 500
                             Enemy.SPAWN_DELAY = 500 if Enemy.SPAWN_DELAY < 1000 else Enemy.SPAWN_DELAY - 500
@@ -236,6 +238,7 @@ def run_game(screen):
                 if not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY):
                     screen.blit(level_indicator, level_indicator_rect)
                     screen.blit(score_indicator, score_indicator_rect)
+                    states.draw_progress_bar(screen)
 
                 if current_time - states.PLAY_TIME <= states.PLAY_DELAY and not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY):
                     play(screen)

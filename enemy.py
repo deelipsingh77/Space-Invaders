@@ -10,6 +10,7 @@ class Enemy:
     SPAWN_DELAY = 5000
     LAST_SPAWN_TIME = 0
     ENEMY_COUNT = 0
+    ENEMY_DESTROYED = 0
     ENEMY_SPEED = 1
     BOSS_SPEED = 1
 
