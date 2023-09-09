@@ -1,12 +1,14 @@
 import pygame
 import sys
+import states
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
-from assets import spaceship_img
+from assets import spaceship_img, explode_img
+from texts import level_display, hud_display 
+from states import play, pause, gameover
 
 class Player:
     CRASH_DELAY = 100
     PLAYER_SPEED = 5
-    PLAYER_SCORE = 0
 
     def __init__(self):
         self.rect = spaceship_img.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT-PLAYER_HEIGHT))
@@ -59,3 +61,37 @@ class Player:
         self.x_change = 0
     def stop_y(self):
         self.y_change = 0
+
+    @staticmethod
+    def update_player(screen, player, current_time, enemies, bullets, slimes, defeated):
+        if player.health > 0:
+            if states.GAME_LEVEL < 6:
+                player.draw(screen)
+                if not states.PAUSE_STATE:
+                    player.move()
+
+                if current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY:
+                    level_display(screen)
+
+                if current_time - player.health_bar_time <= states.HEALTH_BAR_DELAY:
+                    player.draw_health_bar(screen)
+
+                if current_time - player.explosion_time <= states.EXPLOSION_DELAY:
+                    explode_img_rect = explode_img.get_rect(center = player.rect.center)
+                    screen.blit(explode_img, explode_img_rect)
+
+                if current_time - player.crash_time <= Player.CRASH_DELAY:
+                    player.rect.top += 20 
+
+                if not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY):
+                    hud_display(screen)
+                if current_time - states.PLAY_TIME <= states.PLAY_DELAY and not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY):
+                    play(screen)
+
+                if states.PAUSE_STATE:
+                    pause(screen)
+            else:
+                states.WIN_STATE = True
+                gameover(screen, enemies, bullets, slimes, defeated)
+        else:
+            gameover(screen, enemies, bullets, slimes, defeated)

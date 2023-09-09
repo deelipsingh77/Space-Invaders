@@ -1,6 +1,7 @@
 import pygame
 import random
-from constants import SCREEN_WIDTH, COLORS
+import states
+from constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLORS
 
 class Star:
     STAR_GENERATION_TIME = 0
@@ -19,3 +20,28 @@ class Star:
 
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.size)
+    
+    @staticmethod
+    def initial_stars(stars):
+        for _ in range(random.randint(20, 30)):
+            new_star = Star()
+            new_star.y = random.randint(0, 600)
+            stars.append(new_star)
+
+    @staticmethod
+    def update_stars(screen, stars):
+        for star in stars:
+            star.draw(screen)
+            if not states.PAUSE_STATE:
+                star.move()
+
+            if star.y > SCREEN_HEIGHT:
+                stars.remove(star)
+
+    @staticmethod
+    def generate_stars(player, current_time, stars):
+        if current_time - Star.STAR_GENERATION_TIME >= Star.STAR_DELAY and not player.health <= 0 and not states.PAUSE_STATE:
+            for _ in range(random.randint(1, 4)):
+                new_star = Star()
+                stars.append(new_star)
+                Star.STAR_GENERATION_TIME = current_time

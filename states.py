@@ -1,6 +1,5 @@
 import pygame
 import states
-from player import Player
 from bullet import Bullet
 from slime import Slime
 from enemy import Enemy
@@ -16,9 +15,11 @@ PLAY_TIME = 0
 LEVEL_DELAY = 3000
 HEALTH_BAR_DELAY = 3000
 PLAY_DELAY = 500
+EXPLOSION_DELAY = 100
 
 # Level
 GAME_LEVEL = 1
+PLAYER_SCORE = 0
 
 # Game State
 PAUSE_STATE = False
@@ -26,7 +27,7 @@ WIN_STATE = False
 
 def reset(player, *entities):
     player.__init__()
-    Player.PLAYER_SCORE = 0
+    states.PLAYER_SCORE = 0
     states.GAME_LEVEL = 1
     Bullet.LAST_SHOT_TIME = 0
     Bullet.FIRE_DELAY = 150
@@ -46,7 +47,7 @@ def flush(*entities):
         entity.clear()
 
 def gameover(screen, *entities):
-    score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
+    score_indicator = font2.render(f"Score: {states.PLAYER_SCORE}", True, (255,255,255))
     score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
 
     if not states.WIN_STATE:
