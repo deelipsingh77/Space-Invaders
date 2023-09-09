@@ -36,3 +36,18 @@ class Slime:
 
             if (slime in slimes) and (slime.rect.top > SCREEN_HEIGHT):
                 slimes.remove(slime)
+
+    @staticmethod
+    def create_slime(enemy, current_time, slimes):
+        if (current_time - enemy.last_slime_time >= Slime.SLIME_DELAY) and (current_time - enemy.spawn_time >= Slime.SLIME_DELAY) and not states.PAUSE_STATE:
+            if not enemy.isBoss:
+                slimes.append(Slime(enemy.rect.midbottom))
+            else:
+                if states.GAME_LEVEL == 1:
+                    new_slime = [Slime(enemy.rect.midbottom)]
+                elif states.GAME_LEVEL == 2:
+                    new_slime = [Slime((enemy.rect.left + (enemy.rect.centerx-enemy.rect.left)//2, enemy.rect.bottom)), Slime((enemy.rect.centerx + (enemy.rect.right-enemy.rect.centerx)//2, enemy.rect.bottom))]
+                elif states.GAME_LEVEL >= 3:
+                    new_slime = [Slime(enemy.rect.bottomleft), Slime(enemy.rect.midbottom), Slime(enemy.rect.bottomright)]
+                slimes.extend(new_slime)
+            enemy.last_slime_time = current_time
