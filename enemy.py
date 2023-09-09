@@ -1,28 +1,35 @@
 import pygame
 import random
+import states
 import sys
-import attributes as atr
 from constants import SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
 from assets import enemy_img, boss_img
 
 class Enemy:
+    JUST_SPAWNED = True
+    SPAWN_DELAY = 5000
+    LAST_SPAWN_TIME = 0
+    ENEMY_COUNT = 0
+    ENEMY_SPEED = 1
+    BOSS_SPEED = 1
+
     def __init__(self, isBoss):
         self.isBoss = isBoss
         if self.isBoss:
-            self.enemy = boss_img[atr.GAME_LEVEL-1] 
+            self.enemy = boss_img[states.GAME_LEVEL-1] 
             self.height = BOSS_HEIGHT
             self.width = BOSS_WIDTH
-            self.x_change = atr.BOSS_SPEED
-            self.y_change = atr.BOSS_SPEED
-            self.max_health = 1000*atr.GAME_LEVEL
+            self.x_change = Enemy.BOSS_SPEED
+            self.y_change = Enemy.BOSS_SPEED
+            self.max_health = 1000*states.GAME_LEVEL
             self.health = self.max_health
         else:
             self.enemy = random.choice(enemy_img)
             self.height = PLAYER_HEIGHT
             self.width = PLAYER_WIDTH
-            self.x_change = atr.ENEMY_SPEED
-            self.y_change = atr.ENEMY_SPEED
-            self.max_health = 100+(atr.GAME_LEVEL-1)*10
+            self.x_change = Enemy.ENEMY_SPEED
+            self.y_change = Enemy.ENEMY_SPEED
+            self.max_health = 100+(states.GAME_LEVEL-1)*10
             self.health = self.max_health
         self.rect = self.enemy.get_rect(midbottom = (random.randint(0, SCREEN_WIDTH - self.width/2), 0))
         self.start = self.rect.top

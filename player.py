@@ -4,6 +4,10 @@ from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
 from assets import spaceship_img
 
 class Player:
+    CRASH_DELAY = 100
+    PLAYER_SPEED = 5
+    PLAYER_SCORE = 0
+
     def __init__(self):
         self.rect = spaceship_img.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT-PLAYER_HEIGHT))
         self.x, self.y = self.rect.center
