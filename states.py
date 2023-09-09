@@ -25,7 +25,8 @@ PAUSE_STATE = False
 WIN_STATE = False
 
 def reset(player, *entities):
-    player.rect.center = (SCREEN_WIDTH//2, SCREEN_HEIGHT-PLAYER_HEIGHT)
+    player.__init__()
+    Player.PLAYER_SCORE = 0
     states.GAME_LEVEL = 1
     Bullet.LAST_SHOT_TIME = 0
     Bullet.FIRE_DELAY = 150
@@ -36,20 +37,27 @@ def reset(player, *entities):
     Enemy.LAST_SPAWN_TIME = 0
     Enemy.ENEMY_SPEED = 1
     Enemy.BOSS_SPEED = 1
+    Enemy.ENEMY_DESTROYED = 0
+    states.WIN_STATE = False
     flush(*entities)
 
 def flush(*entities):
     for entity in entities:
         entity.clear()
 
-def gameover(screen, player, *entities):
+def gameover(screen, *entities):
     score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
     score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
 
-    screen.blit(gameover_img, ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
-    screen.blit(game_over_text,game_over_rect)
+    if not states.WIN_STATE:
+        screen.blit(gameover_img, ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
+        screen.blit(game_over_text,game_over_rect)
+    else:
+        screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
+        screen.blit(game_win_text,game_win_rect)
+
     screen.blit(score_indicator, score_indicator_rect)
-    states.reset(player, *entities)
+    states.flush(*entities)
 
 def play(screen):
     screen.blit(play_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
@@ -64,17 +72,6 @@ def toggle_pause(player, current_time):
             states.PAUSE_STATE = False
         else:
             states.PAUSE_STATE = True
-
-
-def you_win(screen, *entities):
-    states.WIN_STATE = True
-    flush(*entities)
-    score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
-    score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
-
-    screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
-    screen.blit(game_win_text,game_win_rect)
-    screen.blit(score_indicator, score_indicator_rect)
 
 def draw_progress_bar(screen):
     bar_height = 200

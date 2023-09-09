@@ -8,7 +8,7 @@ from star import Star
 from bullet import Bullet
 from enemy import Enemy
 from slime import Slime
-from states import gameover, play, pause, you_win
+from states import gameover, play, pause 
 from texts import health_restored, health_restored_rect, font2, font3
 from events import handle_keydown_event, handle_keyup_event
 
@@ -36,10 +36,6 @@ def run_game(screen):
 
         current_time = pygame.time.get_ticks()
 
-        level_indicator =  font2.render(f"Level: {states.GAME_LEVEL}", True, (255,255,255))
-        level_indicator_rect = level_indicator.get_rect(topleft = (10, 10))
-        score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
-        score_indicator_rect = score_indicator.get_rect(topright = (SCREEN_WIDTH-10, 10))
         level_banner = font3.render(f"Level {states.GAME_LEVEL}", True, (255,255,255))
         level_banner_rect = level_banner.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
 
@@ -53,7 +49,7 @@ def run_game(screen):
             if event.type == pygame.KEYUP:
                 handle_keyup_event(event.key, player)
 
-        if current_time - Bullet.LAST_SHOT_TIME >= Bullet.FIRE_DELAY and not player.health <= 0 and Bullet.SHOOT:
+        if current_time - Bullet.LAST_SHOT_TIME >= Bullet.FIRE_DELAY and not player.health <= 0 and Bullet.SHOOT and not states.WIN_STATE:
             new_bullet = Bullet(player.rect.midtop)
             bullets.append(new_bullet)
             Bullet.LAST_SHOT_TIME = current_time
@@ -212,6 +208,10 @@ def run_game(screen):
                     player.rect.top += 20 
 
                 if not (current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY):
+                    level_indicator =  font2.render(f"Level: {states.GAME_LEVEL}", True, (255,255,255))
+                    level_indicator_rect = level_indicator.get_rect(topleft = (10, 10))
+                    score_indicator = font2.render(f"Score: {Player.PLAYER_SCORE}", True, (255,255,255))
+                    score_indicator_rect = score_indicator.get_rect(topright = (SCREEN_WIDTH-10, 10))
                     screen.blit(level_indicator, level_indicator_rect)
                     screen.blit(score_indicator, score_indicator_rect)
                     states.draw_progress_bar(screen)
@@ -222,9 +222,10 @@ def run_game(screen):
                 if states.PAUSE_STATE:
                     pause(screen)
             else:
-                you_win(screen, enemies, slimes, bullets)
+                states.WIN_STATE = True
+                gameover(screen, enemies, bullets, slimes, defeated)
         else:
-            gameover(screen, player, enemies, slimes, bullets)
+            gameover(screen, enemies, bullets, slimes, defeated)
 
         pygame.display.update()
         clock.tick(FPS)

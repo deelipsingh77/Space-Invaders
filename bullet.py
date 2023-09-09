@@ -1,5 +1,6 @@
 import states
 from assets import bullet_img
+from enemy import Enemy
 
 class Bullet:
     LAST_SHOT_TIME = 0
@@ -20,10 +21,9 @@ class Bullet:
     def move(self):
         self.rect.top -= self.speed
     
-    def fire(player):
+    def fire(player, *entities):
         if player.health <= 0:
-            player.health = 100
-            player.PLAYER_SCORE = 0
+            states.reset(player, *entities)
         elif player.health > 0 and states.GAME_LEVEL < 6:
             Bullet.SHOOT = True
 
