@@ -5,7 +5,7 @@ from slime import Slime
 from enemy import Enemy
 from texts import game_over_text, game_over_rect, game_win_text, game_win_rect, font2
 from assets import gameover_img, play_img, pause_img, youwin_img
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 # Timing
 LEVEL_BANNER_TIME = 0

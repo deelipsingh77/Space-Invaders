@@ -1,6 +1,6 @@
 import pygame
 from constants import *
-from assets import icon_img, explode2_img
+from assets import icon_img
 from player import Player
 from star import Star
 from bullet import Bullet
