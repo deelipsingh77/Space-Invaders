@@ -2,7 +2,7 @@ import sys
 import states
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
 from assets import spaceship_img
-from images import damage_display
+from damage import damage_display
 from texts import level_display, hud_display 
 from states import play, pause, gameover
 from healthbar import health_bar_display

@@ -3,7 +3,7 @@ import states
 import sys
 from constants import SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH, SCREEN_HEIGHT
 from assets import enemy_img, boss_img, blast_img, explode2_img
-from images import damage_display
+from damage import damage_display, explosion_display
 from slime import Slime
 from healthbar import health_bar_display
 
@@ -79,10 +79,8 @@ class Enemy:
 
             health_bar_display(screen, enemy, current_time)
             damage_display(screen, enemy, current_time)
-
-            if current_time - enemy.crash_time <= states.EXPLOSION_DELAY:
-                blast_img_rect = blast_img.get_rect(midtop = enemy.rect.midbottom)
-                screen.blit(blast_img, blast_img_rect)
+            explosion_display(screen, enemy, current_time)
+            
 
             Slime.create_slime(enemy, current_time, slimes)
 
