@@ -41,6 +41,16 @@ def play_text(color):
     play_game_rect = play_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
     return play_game, play_game_rect
 
+def resume_text(color):
+    resume_game = font4.render("Resume", True, color)
+    resume_game_rect = resume_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
+    return resume_game, resume_game_rect
+
+def main_menu_text(color):
+    return_game = font4.render("Main Menu", True, color)
+    return_game_rect = return_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4) + (SCREEN_HEIGHT//8)))
+    return return_game, return_game_rect
+
 def exit_text(color):
     exit_game = font4.render("Exit", True, color)
     exit_game_rect = exit_game.get_rect(midtop = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4) + (SCREEN_HEIGHT//16)))

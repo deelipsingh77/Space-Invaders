@@ -5,6 +5,7 @@ from entities.slime import Slime
 from entities.enemy import Enemy
 from graphics.texts import game_over_text, game_over_rect, game_win_text, game_win_rect, font2
 from core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from graphics.menu import pause_menu
 
 # Timing
 LEVEL_BANNER_TIME = 0
@@ -25,7 +26,7 @@ PAUSE_STATE = False
 WIN_STATE = False
 
 def reset(player, *entities):
-    global PLAYER_SCORE, GAME_LEVEL, WIN_STATE
+    global PLAYER_SCORE, GAME_LEVEL, WIN_STATE, PAUSE_STATE
     player.__init__()
     PLAYER_SCORE = 0
     GAME_LEVEL = 1
@@ -40,6 +41,7 @@ def reset(player, *entities):
     Enemy.BOSS_SPEED = 1
     Enemy.ENEMY_DESTROYED = 0
     WIN_STATE = False
+    PAUSE_STATE = False
     flush(*entities)
 
 def flush(*entities):
@@ -64,6 +66,7 @@ def play(screen):
     screen.blit(assets.images['play_img'], ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def pause(screen):
+    pause_menu(screen)
     screen.blit(assets.images['pause_img'], ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def toggle_pause(player, current_time):

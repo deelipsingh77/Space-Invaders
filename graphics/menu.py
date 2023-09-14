@@ -3,7 +3,7 @@ import core.constants as constants
 import graphics.assets as assets
 from core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from core.highscore import get_high_score
-from graphics.texts import font2, font4, play_text, exit_text
+from graphics.texts import font2, play_text, exit_text, resume_text, main_menu_text
 
 def show_menu(screen):
     play = None
@@ -34,3 +34,25 @@ def show_menu(screen):
         
     screen.blit(*play)
     screen.blit(*exit)
+    
+def pause_menu(screen):
+    resume = None
+    main_menu = None
+    
+    tomato = (255, 99, 71)
+    white = (255, 255, 255)    
+    if constants.pause_option:
+        resume = resume_text(tomato)
+        main_menu = main_menu_text(white)
+        
+        vertices = [(resume[1].left - 20, resume[1].centery), (resume[1].left-50, resume[1].top), (resume[1].left-50, resume[1].bottom)]
+        pygame.draw.polygon(screen, tomato, vertices)
+    else:
+        resume = resume_text(white)
+        main_menu = main_menu_text(tomato)
+        
+        vertices = [(main_menu[1].left - 20, main_menu[1].centery), (main_menu[1].left-50, main_menu[1].top), (main_menu[1].left-50, main_menu[1].bottom)]
+        pygame.draw.polygon(screen, tomato, vertices)
+        
+    screen.blit(*resume)
+    screen.blit(*main_menu)
