@@ -1,11 +1,11 @@
 import sys
-import states
-import assets
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
-from damage import damage_display
-from texts import level_display, hud_display 
-from states import play, pause, gameover
-from healthbar import health_bar_display
+import core.states as states
+import graphics.assets as assets
+from core.constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
+from graphics.damage import damage_display
+from graphics.texts import level_display, hud_display 
+from core.states import play, pause, gameover
+from graphics.healthbar import health_bar_display
 
 class Player:
     CRASH_DELAY = 100

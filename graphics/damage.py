@@ -1,5 +1,5 @@
-import states
-import assets
+import core.states as states
+import graphics.assets as assets
 
 def damage_display(screen, entity, current_time):
     if current_time - entity.explosion_time <= states.EXPLOSION_DELAY:

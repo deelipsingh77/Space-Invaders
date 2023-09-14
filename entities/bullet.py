@@ -1,7 +1,7 @@
-import states
-import assets
-from enemy import Enemy
-from slime import Slime
+import core.states as states
+import graphics.assets as assets
+from entities.enemy import Enemy
+from entities.slime import Slime
 
 class Bullet:
     LAST_SHOT_TIME = 0

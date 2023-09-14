@@ -1,7 +1,7 @@
 import pygame
-import states
-from enemy import Enemy
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH
+import core.states as states
+from entities.enemy import Enemy
+from core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 pygame.font.init()
 

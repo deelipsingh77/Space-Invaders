@@ -1,6 +1,6 @@
-from bullet import Bullet
+from entities.bullet import Bullet
 from pygame.locals import K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN, K_ESCAPE, K_SPACE
-from states import toggle_pause, reset
+from core.states import toggle_pause, reset
 
 def handle_keydown_event(key, player, current_time, *entities):
     key_actions = {

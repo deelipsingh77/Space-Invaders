@@ -1,7 +1,7 @@
 import pygame
 import random
-import states
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLORS
+import core.states as states
+from core.constants import SCREEN_WIDTH, SCREEN_HEIGHT, COLORS
 
 class Star:
     STAR_GENERATION_TIME = 0

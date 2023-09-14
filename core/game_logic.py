@@ -1,12 +1,12 @@
 import pygame
-import assets
-from constants import *
-from player import Player
-from star import Star
-from bullet import Bullet
-from enemy import Enemy
-from slime import Slime
-from events import handle_keydown_event, handle_keyup_event
+import graphics.assets as assets
+from core.constants import *
+from entities.player import Player
+from entities.star import Star
+from entities.bullet import Bullet
+from entities.enemy import Enemy
+from entities.slime import Slime
+from core.events import handle_keydown_event, handle_keyup_event
 
 def run_game(screen):
     pygame.display.set_icon(assets.icon)

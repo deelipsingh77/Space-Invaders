@@ -1,8 +1,8 @@
 import pygame
-import assets
-from game_logic import run_game
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from assets import *
+import graphics.assets as assets
+from core.game_logic import run_game
+from core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from graphics.assets import *
 
 if __name__ == "__main__":
     pygame.init()

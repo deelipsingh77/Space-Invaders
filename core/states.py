@@ -1,11 +1,10 @@
 import pygame
-import states
-import assets
-from bullet import Bullet
-from slime import Slime
-from enemy import Enemy
-from texts import game_over_text, game_over_rect, game_win_text, game_win_rect, font2
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH
+import graphics.assets as assets
+from entities.bullet import Bullet
+from entities.slime import Slime
+from entities.enemy import Enemy
+from graphics.texts import game_over_text, game_over_rect, game_win_text, game_win_rect, font2
+from core.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 # Timing
 LEVEL_BANNER_TIME = 0
@@ -26,9 +25,10 @@ PAUSE_STATE = False
 WIN_STATE = False
 
 def reset(player, *entities):
+    global PLAYER_SCORE, GAME_LEVEL, WIN_STATE
     player.__init__()
-    states.PLAYER_SCORE = 0
-    states.GAME_LEVEL = 1
+    PLAYER_SCORE = 0
+    GAME_LEVEL = 1
     Bullet.LAST_SHOT_TIME = 0
     Bullet.FIRE_DELAY = 150
     Slime.SLIME_DELAY = 3000
@@ -39,7 +39,7 @@ def reset(player, *entities):
     Enemy.ENEMY_SPEED = 1
     Enemy.BOSS_SPEED = 1
     Enemy.ENEMY_DESTROYED = 0
-    states.WIN_STATE = False
+    WIN_STATE = False
     flush(*entities)
 
 def flush(*entities):
@@ -47,10 +47,10 @@ def flush(*entities):
         entity.clear()
 
 def gameover(screen, *entities):
-    score_indicator = font2.render(f"Score: {states.PLAYER_SCORE}", True, (255,255,255))
+    score_indicator = font2.render(f"Score: {PLAYER_SCORE}", True, (255,255,255))
     score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
 
-    if not states.WIN_STATE:
+    if not WIN_STATE:
         screen.blit(assets.images['gameover_img'], ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
         screen.blit(game_over_text,game_over_rect)
     else:
@@ -58,7 +58,7 @@ def gameover(screen, *entities):
         screen.blit(game_win_text,game_win_rect)
 
     screen.blit(score_indicator, score_indicator_rect)
-    states.flush(*entities)
+    flush(*entities)
 
 def play(screen):
     screen.blit(assets.images['play_img'], ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
@@ -67,12 +67,13 @@ def pause(screen):
     screen.blit(assets.images['pause_img'], ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def toggle_pause(player, current_time):
+    global PLAY_TIME, PAUSE_STATE
     if GAME_LEVEL < 6 and player.health > 0:
-        if states.PAUSE_STATE:
-            states.PLAY_TIME = current_time
-            states.PAUSE_STATE = False
+        if PAUSE_STATE:
+            PLAY_TIME = current_time
+            PAUSE_STATE = False
         else:
-            states.PAUSE_STATE = True
+            PAUSE_STATE = True
 
 def draw_progress_bar(screen):
     bar_height = 200

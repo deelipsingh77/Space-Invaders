@@ -1,11 +1,11 @@
 import random
-import states
 import sys
-from constants import SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH, SCREEN_HEIGHT
-import assets
-from damage import damage_display, explosion_display
-from slime import Slime
-from healthbar import health_bar_display
+import core.states as states
+import graphics.assets as assets
+from core.constants import SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH, SCREEN_HEIGHT
+from graphics.damage import damage_display, explosion_display
+from entities.slime import Slime
+from graphics.healthbar import health_bar_display
 
 class Enemy:
     JUST_SPAWNED = True

@@ -1,5 +1,5 @@
 import pygame
-import states
+import core.states as states
 
 def health_bar_display(screen, entity, current_time):
     if current_time - entity.health_bar_time <= states.HEALTH_BAR_DELAY:

@@ -1,6 +1,6 @@
-import states
-import assets
-from constants import SCREEN_HEIGHT
+import core.states as states
+import graphics.assets as assets
+from core.constants import SCREEN_HEIGHT
 
 class Slime:
     SLIME_DELAY = 3000
