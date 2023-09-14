@@ -79,8 +79,7 @@ class Enemy:
 
             health_bar_display(screen, enemy, current_time)
             damage_display(screen, enemy, current_time)
-            explosion_display(screen, enemy, current_time)
-            
+            explosion_display(screen, enemy, current_time) 
 
             Slime.create_slime(enemy, current_time, slimes)
 
