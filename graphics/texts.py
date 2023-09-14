@@ -11,10 +11,10 @@ font3 = pygame.font.Font("assets/fonts/consolab.ttf", 150)
 font4 = pygame.font.Font("assets/fonts/consola.ttf", 50)
 
 play_game = font4.render("Play", True, (255, 255, 255))
-play_game_rect = play_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) - 20))
+play_game_rect = play_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
 
 exit_game = font4.render("Exit", True, (255, 255, 255))
-exit_game_rect = exit_game.get_rect(midtop = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 20))
+exit_game_rect = exit_game.get_rect(midtop = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4) + (SCREEN_HEIGHT//16)))
 
 health_restored = font2.render("Health Restored! Max Health + 10", True, (255, 255, 255))
 health_restored_rect = health_restored.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 100))

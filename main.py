@@ -23,7 +23,8 @@ if __name__ == "__main__":
         "explode2_img": pygame.image.load(EXPLODE_IMAGE_PATH2).convert_alpha(),
         "blast_img": pygame.image.load(BLASTING_IMAGE_PATH).convert_alpha(),
         "play_img": pygame.image.load(PLAY_IMAGE_PATH).convert_alpha(),
-        "pause_img": pygame.image.load(PAUSE_IMAGE_PATH).convert_alpha()
+        "pause_img": pygame.image.load(PAUSE_IMAGE_PATH).convert_alpha(),
+        "menu_img": pygame.image.load(MENU_IMAGE_PATH).convert_alpha()
     }
     
     assets.assign_assets(images)

@@ -51,13 +51,14 @@ def run_game(screen):
             if event.type == pygame.KEYUP:
                 handle_keyup_event(event.key, player)
 
+        Star.generate_stars(player, current_time, stars)
+        Star.update_stars(screen, stars)
+        
         if not constants.MENU_STATE:
             Bullet.create_bullet(player, current_time, bullets)
             Enemy.spawn_enemy(player, current_time, enemies) 
-            Star.generate_stars(player, current_time, stars)
 
             args = [screen, player, current_time]
-            Star.update_stars(screen, stars)
             Enemy.update_defeated(screen, current_time, defeated)
             Enemy.update_enemy(*args, enemies, slimes, defeated)
             Bullet.update_bullet(*args, bullets, enemies, slimes, defeated)

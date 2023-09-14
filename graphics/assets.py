@@ -11,6 +11,7 @@ EXPLODE_IMAGE_PATH2 = "assets/bullets/explode2.png"
 BLASTING_IMAGE_PATH = "assets/bullets/blasting.png"
 PLAY_IMAGE_PATH = "assets/states/play.png"
 PAUSE_IMAGE_PATH = "assets/states/pause.png"
+MENU_IMAGE_PATH = "assets/menu/space-invaders.png"
 
 images = None
 icon = None
