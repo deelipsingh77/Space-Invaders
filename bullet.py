@@ -1,5 +1,5 @@
 import states
-from assets import bullet_img
+import assets
 from enemy import Enemy
 from slime import Slime
 
@@ -10,13 +10,13 @@ class Bullet:
     SHOOT = False
 
     def __init__(self, points):
-        self.rect = bullet_img.get_rect(midtop = points)
+        self.rect = assets.images['bullet_img'].get_rect(midtop = points)
         self.x , self.y = self.rect.center
         self.speed = Bullet.BULLET_SPEED
         self.damage = 10+((states.GAME_LEVEL-1)/10)
 
     def draw(self, screen):
-        screen.blit(bullet_img, self.rect)
+        screen.blit(assets.images['bullet_img'], self.rect)
 
     def move(self):
         self.rect.top -= self.speed

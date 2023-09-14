@@ -1,6 +1,6 @@
 import pygame
+import assets
 from constants import *
-from assets import icon_img
 from player import Player
 from star import Star
 from bullet import Bullet
@@ -9,7 +9,7 @@ from slime import Slime
 from events import handle_keydown_event, handle_keyup_event
 
 def run_game(screen):
-    pygame.display.set_icon(icon_img)
+    pygame.display.set_icon(assets.icon)
     clock = pygame.time.Clock()
     player = Player()
 
@@ -40,13 +40,13 @@ def run_game(screen):
         Enemy.spawn_enemy(player, current_time, enemies) 
         Star.generate_stars(player, current_time, stars)
 
-
+        args = [screen, player, current_time]
         Star.update_stars(screen, stars)
-        Enemy.update_enemy(screen, player, current_time, enemies, slimes, defeated)
         Enemy.update_defeated(screen, current_time, defeated)
-        Bullet.update_bullet(screen, player, current_time, bullets, enemies, slimes, defeated)
-        Slime.update_slime(screen, player, current_time, slimes, defeated)
-        Player.update_player(screen, player, current_time, enemies, bullets, slimes, defeated)
+        Enemy.update_enemy(*args, enemies, slimes, defeated)
+        Bullet.update_bullet(*args, bullets, enemies, slimes, defeated)
+        Slime.update_slime(*args, slimes, defeated)
+        Player.update_player(*args, enemies, bullets, slimes, defeated)
 
         pygame.display.update()
         clock.tick(FPS)

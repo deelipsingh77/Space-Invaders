@@ -1,13 +1,13 @@
 import states
+import assets
 from constants import SCREEN_HEIGHT
-from assets import slime_img
 
 class Slime:
     SLIME_DELAY = 3000
     SLIME_SPEED = 5
 
     def __init__(self, enemy):
-        self.rect = slime_img.get_rect(midbottom = enemy)
+        self.rect = assets.images['slime_img'].get_rect(midbottom = enemy)
         self.x, self.y = self.rect.center
         self.speed = Slime.SLIME_SPEED 
         self.damage = 10+((states.GAME_LEVEL-1)/10)
@@ -16,7 +16,7 @@ class Slime:
         self.rect.bottom += self.speed
 
     def draw(self, screen):
-            screen.blit(slime_img, self.rect)
+            screen.blit(assets.images['slime_img'], self.rect)
 
     @staticmethod
     def update_slime(screen, player, current_time, slimes, defeated):

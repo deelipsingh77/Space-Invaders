@@ -1,7 +1,7 @@
 import sys
 import states
+import assets
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH
-from assets import spaceship_img
 from damage import damage_display
 from texts import level_display, hud_display 
 from states import play, pause, gameover
@@ -13,7 +13,7 @@ class Player:
 
     def __init__(self):
         self.isPlayer = True
-        self.rect = spaceship_img.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT-PLAYER_HEIGHT))
+        self.rect = assets.images['spaceship_img'].get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT-PLAYER_HEIGHT))
         self.height = PLAYER_HEIGHT
         self.width = PLAYER_WIDTH
         self.x_change = 0
@@ -34,7 +34,7 @@ class Player:
         self.rect.bottom = SCREEN_HEIGHT if self.rect.bottom > SCREEN_HEIGHT else self.rect.bottom
 
     def draw(self, screen):
-        screen.blit(spaceship_img, self.rect)
+        screen.blit(assets.images['spaceship_img'], self.rect)
 
     def move_left(self):
         self.x_change = -Player.PLAYER_SPEED

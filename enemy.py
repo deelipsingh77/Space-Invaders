@@ -2,7 +2,7 @@ import random
 import states
 import sys
 from constants import SCREEN_WIDTH, BOSS_HEIGHT, BOSS_WIDTH, PLAYER_HEIGHT, PLAYER_WIDTH, SCREEN_HEIGHT
-from assets import enemy_img, boss_img, blast_img, explode2_img
+import assets
 from damage import damage_display, explosion_display
 from slime import Slime
 from healthbar import health_bar_display
@@ -20,7 +20,7 @@ class Enemy:
         self.isPlayer = False
         self.isBoss = isBoss
         if self.isBoss:
-            self.enemy = boss_img[states.GAME_LEVEL-1] 
+            self.enemy = assets.images['boss_img'][states.GAME_LEVEL-1] 
             self.height = BOSS_HEIGHT
             self.width = BOSS_WIDTH
             self.x_change = Enemy.BOSS_SPEED
@@ -28,7 +28,7 @@ class Enemy:
             self.max_health = 1000*states.GAME_LEVEL
             self.health = self.max_health
         else:
-            self.enemy = random.choice(enemy_img)
+            self.enemy = random.choice(assets.images['enemy_img'])
             self.height = PLAYER_HEIGHT
             self.width = PLAYER_WIDTH
             self.x_change = Enemy.ENEMY_SPEED
@@ -118,7 +118,7 @@ class Enemy:
     def update_defeated(screen, current_time, defeated):
         for defeat in defeated:
             if current_time - defeat.defeat_time <= states.EXPLOSION_DELAY:
-                explode2_img_rect = explode2_img.get_rect(center = defeat.rect.center)
-                screen.blit(explode2_img, explode2_img_rect)
+                explode2_img_rect = assets.images['explode2_img'].get_rect(center = defeat.rect.center)
+                screen.blit(assets.images['explode2_img'], explode2_img_rect)
             else:
                 defeated.remove(defeat)

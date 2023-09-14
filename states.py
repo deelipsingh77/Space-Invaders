@@ -1,10 +1,10 @@
 import pygame
 import states
+import assets
 from bullet import Bullet
 from slime import Slime
 from enemy import Enemy
 from texts import game_over_text, game_over_rect, game_win_text, game_win_rect, font2
-from assets import gameover_img, play_img, pause_img, youwin_img
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 # Timing
@@ -51,20 +51,20 @@ def gameover(screen, *entities):
     score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
 
     if not states.WIN_STATE:
-        screen.blit(gameover_img, ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
+        screen.blit(assets.images['gameover_img'], ((SCREEN_WIDTH-600)//2, (SCREEN_HEIGHT-309)//2))
         screen.blit(game_over_text,game_over_rect)
     else:
-        screen.blit(youwin_img, ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
+        screen.blit(assets.images['youwin_img'], ((SCREEN_WIDTH-256)//2, (SCREEN_HEIGHT-256)//2))
         screen.blit(game_win_text,game_win_rect)
 
     screen.blit(score_indicator, score_indicator_rect)
     states.flush(*entities)
 
 def play(screen):
-    screen.blit(play_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
+    screen.blit(assets.images['play_img'], ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def pause(screen):
-    screen.blit(pause_img, ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
+    screen.blit(assets.images['pause_img'], ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))
 
 def toggle_pause(player, current_time):
     if GAME_LEVEL < 6 and player.health > 0:
