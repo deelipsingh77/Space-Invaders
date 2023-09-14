@@ -51,8 +51,15 @@ class Enemy:
 
     def move(self):
         if self.v_move:
-            self.rect.bottom += self.y_change
-            if self.rect.top - self.start > self.height+15:
+            if not self.isBoss:
+                self.rect.bottom += self.y_change
+            else:
+                if states.V_MOVE_COUNT < 3 or states.V_MOVE_COUNT >= 5:
+                    self.rect.bottom += self.y_change
+                elif states.V_MOVE_COUNT in (3, 4):
+                    self.rect.bottom -= self.y_change
+                    
+            if abs(self.rect.top - self.start) > self.height+15:
                 self.v_move = False
                 self.h_move = True
                 self.start = self.rect.top
@@ -60,11 +67,13 @@ class Enemy:
             self.rect.centerx += self.x_change
 
         if self.rect.left < 0:
+            states.V_MOVE_COUNT += 1
             self.rect.left = 0
             self.v_move = True
             self.h_move = False
             self.x_change = abs(self.x_change)
         elif self.rect.right > SCREEN_WIDTH:
+            states.V_MOVE_COUNT += 1
             self.rect.right = SCREEN_WIDTH
             self.v_move = True
             self.h_move = False
