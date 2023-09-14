@@ -1,5 +1,6 @@
 import pygame
 import graphics.assets as assets
+import core.constants as constants
 from entities.bullet import Bullet
 from entities.slime import Slime
 from entities.enemy import Enemy
@@ -42,6 +43,9 @@ def reset(player, *entities):
     Enemy.ENEMY_DESTROYED = 0
     WIN_STATE = False
     PAUSE_STATE = False
+    constants.option = 1
+    constants.pause_option = True
+    constants.settings = False
     flush(*entities)
 
 def flush(*entities):

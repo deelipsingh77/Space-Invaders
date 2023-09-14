@@ -22,3 +22,7 @@ def get_high_score():
     else:
         with open(high_score_file_path, "r") as file:
             return int(file.read())
+        
+def reset_high_score():
+    with open(high_score_file_path, "w") as file:
+        file.write(str(0))

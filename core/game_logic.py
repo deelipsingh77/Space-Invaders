@@ -8,7 +8,8 @@ from entities.bullet import Bullet
 from entities.enemy import Enemy
 from entities.slime import Slime
 from core.events import handle_keydown_event, handle_keyup_event
-from graphics.menu import show_menu
+from graphics.menu import show_menu, show_settings
+from core.highscore import reset_high_score
 
 def run_game(screen):
     pygame.display.set_icon(assets.icon)
@@ -36,17 +37,29 @@ def run_game(screen):
                 if not constants.MENU_STATE:
                     handle_keydown_event(event.key, player, current_time, bullets, enemies, slimes)
                 else:
-                    if event.key == pygame.K_RETURN:
-                        if constants.option:
+                    if event.key == pygame.K_RETURN and not constants.settings:
+                        if constants.option == 1:
                             constants.MENU_STATE = False
-                        else:
+                        elif constants.option == 3:
                             running = False
-                            
-                    if event.key in (pygame.K_UP, pygame.K_DOWN):
-                        if constants.option:
-                            constants.option = False
                         else:
-                            constants.option = True
+                            constants.settings = True
+                    elif event.key == pygame.K_RETURN and constants.settings:
+                        constants.settings = False
+                        reset_high_score()
+                            
+                    if event.key == pygame.K_UP:
+                        constants.option -= 1
+                        if constants.option < 1:
+                            constants.option = 3
+                            
+                    if event.key == pygame.K_DOWN:
+                        constants.option += 1
+                        if constants.option > 3:
+                            constants.option = 1
+                            
+                    if event.key == pygame.K_ESCAPE:
+                        constants.settings = False
                             
             if event.type == pygame.KEYUP:
                 handle_keyup_event(event.key, player)
@@ -65,7 +78,10 @@ def run_game(screen):
             Slime.update_slime(*args, slimes, defeated)
             Player.update_player(*args, enemies, bullets, slimes, defeated)
         else:
-            show_menu(screen)
+            if not constants.settings:
+                show_menu(screen)
+            else:
+                show_settings(screen)
 
         pygame.display.update()
         clock.tick(FPS)

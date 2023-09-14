@@ -38,8 +38,18 @@ def hud_display(screen):
     
 def play_text(color):
     play_game = font4.render("Play", True, color)
-    play_game_rect = play_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
+    play_game_rect = play_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//8)))
     return play_game, play_game_rect
+
+def settings_text(color):
+    settings_game = font4.render("Settings", True, color)
+    settings_game_rect = settings_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
+    return settings_game,  settings_game_rect
+
+def reset_score_text(color):
+    reset_score = font4.render("Reset High Score", True, color)
+    reset_score_rect = reset_score.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
+    return reset_score, reset_score_rect
 
 def resume_text(color):
     resume_game = font4.render("Resume", True, color)

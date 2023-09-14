@@ -4,11 +4,12 @@ from entities.bullet import Bullet
 from pygame.locals import K_LEFT, K_RIGHT, K_UP, K_DOWN, K_RETURN, K_ESCAPE, K_SPACE
 from core.states import toggle_pause, reset
 
-def return_action(player, *entities):
+def return_action(player, current_time, *entities):
     if not states.PAUSE_STATE:
         reset(player, *entities)
     else:
         if constants.pause_option:
+            states.PLAY_TIME = current_time
             states.PAUSE_STATE = False
         else:
             reset(player, *entities)
@@ -38,7 +39,7 @@ def handle_keydown_event(key, player, current_time, *entities):
         K_RIGHT: lambda: player.move_right(),
         K_UP: lambda: up_action(player),
         K_DOWN: lambda: down_action(player),
-        K_RETURN: lambda: return_action(player, *entities),
+        K_RETURN: lambda: return_action(player, current_time, *entities),
         K_ESCAPE: lambda: toggle_pause(player, current_time),
         K_SPACE: lambda: Bullet.fire(player, *entities)
     }
