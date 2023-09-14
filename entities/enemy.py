@@ -67,13 +67,15 @@ class Enemy:
             self.rect.centerx += self.x_change
 
         if self.rect.left < 0:
-            states.V_MOVE_COUNT += 1
+            if self.isBoss:
+                states.V_MOVE_COUNT += 1
             self.rect.left = 0
             self.v_move = True
             self.h_move = False
             self.x_change = abs(self.x_change)
         elif self.rect.right > SCREEN_WIDTH:
-            states.V_MOVE_COUNT += 1
+            if self.isBoss:
+                states.V_MOVE_COUNT += 1
             self.rect.right = SCREEN_WIDTH
             self.v_move = True
             self.h_move = False
