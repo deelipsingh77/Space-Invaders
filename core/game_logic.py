@@ -34,7 +34,7 @@ def run_game(screen):
 
             if event.type == pygame.KEYDOWN:
                 if not constants.MENU_STATE:
-                    handle_keydown_event(event.key, player, current_time, MENU_STATE, bullets, enemies, slimes)
+                    handle_keydown_event(event.key, player, current_time, bullets, enemies, slimes)
                 else:
                     if event.key == pygame.K_RETURN:
                         if constants.option:
