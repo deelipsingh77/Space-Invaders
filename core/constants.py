@@ -15,3 +15,6 @@ COLORS = [(255, 255, 255), (255, 255, 200), (255, 225, 150)]
 
 # Frames Per Second
 FPS = 60
+
+option = True
+MENU_STATE = True
