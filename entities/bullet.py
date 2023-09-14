@@ -2,6 +2,7 @@ import core.states as states
 import graphics.assets as assets
 from entities.enemy import Enemy
 from entities.slime import Slime
+from core.highscore import update_high_score
 
 class Bullet:
     LAST_SHOT_TIME = 0
@@ -49,6 +50,7 @@ class Bullet:
                         enemy.defeat_time = current_time
                         defeated.append(enemy)
                         states.PLAYER_SCORE += enemy.max_health
+                        update_high_score(states.PLAYER_SCORE)
                         Enemy.ENEMY_DESTROYED += 1
                         if enemy.isBoss:
                             states.GAME_LEVEL += 1

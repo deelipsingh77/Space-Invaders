@@ -10,12 +10,6 @@ font2 = pygame.font.Font("assets/fonts/consola.ttf", 25)
 font3 = pygame.font.Font("assets/fonts/consolab.ttf", 150)
 font4 = pygame.font.Font("assets/fonts/consola.ttf", 50)
 
-play_game = font4.render("Play", True, (255, 255, 255))
-play_game_rect = play_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
-
-exit_game = font4.render("Exit", True, (255, 255, 255))
-exit_game_rect = exit_game.get_rect(midtop = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4) + (SCREEN_HEIGHT//16)))
-
 health_restored = font2.render("Health Restored! Max Health + 10", True, (255, 255, 255))
 health_restored_rect = health_restored.get_rect(center = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2 + 100))
 
@@ -41,3 +35,13 @@ def hud_display(screen):
     screen.blit(level_indicator, level_indicator_rect)
     screen.blit(score_indicator, score_indicator_rect)
     states.draw_progress_bar(screen)
+    
+def play_text(color):
+    play_game = font4.render("Play", True, color)
+    play_game_rect = play_game.get_rect(midbottom = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4)))
+    return play_game, play_game_rect
+
+def exit_text(color):
+    exit_game = font4.render("Exit", True, color)
+    exit_game_rect = exit_game.get_rect(midtop = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + (SCREEN_HEIGHT//4) + (SCREEN_HEIGHT//16)))
+    return exit_game, exit_game_rect
