@@ -26,11 +26,11 @@ PLAYER_SCORE = 0
 # Game State
 PAUSE_STATE = False
 WIN_STATE = False
+GAME_OVER = False
 
 def reset(player, *entities):
-    global PLAYER_SCORE, GAME_LEVEL, WIN_STATE, PAUSE_STATE
+    global PLAYER_SCORE, GAME_LEVEL, WIN_STATE, PAUSE_STATE, V_MOVE_COUNT
     player.__init__()
-    PLAYER_SCORE = 0
     GAME_LEVEL = 1
     Bullet.LAST_SHOT_TIME = 0
     Bullet.FIRE_DELAY = 150
@@ -47,13 +47,14 @@ def reset(player, *entities):
     constants.option = 1
     constants.pause_option = True
     constants.settings = False
+    V_MOVE_COUNT = 0
     flush(*entities)
 
 def flush(*entities):
     for entity in entities:
         entity.clear()
 
-def gameover(screen, *entities):
+def gameover(screen, player, *entities):
     score_indicator = font2.render(f"Score: {PLAYER_SCORE}", True, (255,255,255))
     score_indicator_rect = score_indicator.get_rect(center = (SCREEN_WIDTH//2, (SCREEN_HEIGHT//2) + 250))
 
@@ -65,7 +66,7 @@ def gameover(screen, *entities):
         screen.blit(game_win_text,game_win_rect)
 
     screen.blit(score_indicator, score_indicator_rect)
-    flush(*entities)
+    reset(player, *entities)
 
 def play(screen):
     screen.blit(assets.images['play_img'], ((SCREEN_WIDTH-128)//2, (SCREEN_HEIGHT-128)//2))

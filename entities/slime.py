@@ -31,6 +31,7 @@ class Slime:
                 player.explosion_time = current_time
                 player.health_bar_time = current_time
                 if player.health <= 0:
+                    states.GAME_OVER = True
                     player.defeat_time = current_time
                     defeated.append(player)
 

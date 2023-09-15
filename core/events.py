@@ -7,6 +7,7 @@ from core.states import toggle_pause, reset
 def return_action(player, current_time, *entities):
     if not states.PAUSE_STATE:
         reset(player, *entities)
+        states.PLAYER_SCORE = 0
     else:
         if constants.pause_option:
             states.PLAY_TIME = current_time
@@ -41,7 +42,7 @@ def handle_keydown_event(key, player, current_time, *entities):
         K_DOWN: lambda: down_action(player),
         K_RETURN: lambda: return_action(player, current_time, *entities),
         K_ESCAPE: lambda: toggle_pause(player, current_time),
-        K_SPACE: lambda: Bullet.fire(player, *entities)
+        K_SPACE: lambda: Bullet.fire(player)
     }
     action = key_actions.get(key)
     if action:

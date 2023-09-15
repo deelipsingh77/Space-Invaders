@@ -22,9 +22,10 @@ class Bullet:
     def move(self):
         self.rect.top -= self.speed
     
-    def fire(player, *entities):
-        if player.health <= 0:
-            states.reset(player, *entities)
+    def fire(player):
+        if states.GAME_OVER:
+            states.GAME_OVER = False
+            states.PLAYER_SCORE = 0
         elif player.health > 0 and states.GAME_LEVEL < 6:
             Bullet.SHOOT = True
 

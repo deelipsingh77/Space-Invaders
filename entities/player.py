@@ -52,7 +52,7 @@ class Player:
 
     @staticmethod
     def update_player(screen, player, current_time, enemies, bullets, slimes, defeated):
-        if player.health > 0:
+        if not states.GAME_OVER:
             if states.GAME_LEVEL < 6:
                 player.draw(screen)
                 if not states.PAUSE_STATE:
@@ -74,6 +74,6 @@ class Player:
                     pause(screen)
             else:
                 states.WIN_STATE = True
-                gameover(screen, enemies, bullets, slimes, defeated)
+                gameover(screen, player, enemies, bullets, slimes, defeated)
         else:
-            gameover(screen, enemies, bullets, slimes, defeated)
+            gameover(screen, player, enemies, bullets, slimes, defeated)
