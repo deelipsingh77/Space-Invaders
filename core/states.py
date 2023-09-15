@@ -17,7 +17,6 @@ LEVEL_DELAY = 3000
 HEALTH_BAR_DELAY = 3000
 PLAY_DELAY = 500
 EXPLOSION_DELAY = 100
-V_MOVE_COUNT = 0
 
 # Level
 GAME_LEVEL = 1
@@ -29,7 +28,7 @@ WIN_STATE = False
 GAME_OVER = False
 
 def reset(player, *entities):
-    global PLAYER_SCORE, GAME_LEVEL, WIN_STATE, PAUSE_STATE, V_MOVE_COUNT
+    global PLAYER_SCORE, GAME_LEVEL, WIN_STATE, PAUSE_STATE
     player.__init__()
     GAME_LEVEL = 1
     Bullet.LAST_SHOT_TIME = 0
@@ -42,12 +41,12 @@ def reset(player, *entities):
     Enemy.ENEMY_SPEED = 1
     Enemy.BOSS_SPEED = 1
     Enemy.ENEMY_DESTROYED = 0
+    Enemy.V_MOVE_COUNT = 0
     WIN_STATE = False
     PAUSE_STATE = False
     constants.option = 1
     constants.pause_option = True
     constants.settings = False
-    V_MOVE_COUNT = 0
     flush(*entities)
 
 def flush(*entities):

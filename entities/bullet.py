@@ -55,7 +55,7 @@ class Bullet:
                         Enemy.ENEMY_DESTROYED += 1
                         if enemy.isBoss:
                             states.GAME_LEVEL += 1
-                            states.V_MOVE_COUNT = 0
+                            Enemy.V_MOVE_COUNT = 0
                             Enemy.ENEMY_COUNT = 0
                             Enemy.ENEMY_DESTROYED = 0
                             Slime.SLIME_DELAY = 500 if Slime.SLIME_DELAY < 1000 else Slime.SLIME_DELAY - 500

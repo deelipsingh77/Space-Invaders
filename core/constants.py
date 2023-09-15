@@ -16,6 +16,7 @@ COLORS = [(255, 255, 255), (255, 255, 200), (255, 225, 150)]
 # Frames Per Second
 FPS = 60
 
+# Menu Values
 option = 1
 pause_option = True
 settings = False

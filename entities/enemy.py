@@ -15,6 +15,7 @@ class Enemy:
     ENEMY_DESTROYED = 0
     ENEMY_SPEED = 1
     BOSS_SPEED = 0.8
+    V_MOVE_COUNT = 0
 
     def __init__(self, isBoss):
         self.isPlayer = False
@@ -54,9 +55,9 @@ class Enemy:
             if not self.isBoss:
                 self.rect.bottom += self.y_change
             else:
-                if states.V_MOVE_COUNT < 3 or states.V_MOVE_COUNT >= 5:
+                if Enemy.V_MOVE_COUNT < 3 or Enemy.V_MOVE_COUNT >= 5:
                     self.rect.bottom += self.y_change
-                elif states.V_MOVE_COUNT in (3, 4):
+                elif Enemy.V_MOVE_COUNT in (3, 4):
                     self.rect.bottom -= self.y_change
                     
             if abs(self.rect.top - self.start) > self.height+15:
@@ -68,14 +69,14 @@ class Enemy:
 
         if self.rect.left < 0:
             if self.isBoss:
-                states.V_MOVE_COUNT += 1
+                Enemy.V_MOVE_COUNT += 1
             self.rect.left = 0
             self.v_move = True
             self.h_move = False
             self.x_change = abs(self.x_change)
         elif self.rect.right > SCREEN_WIDTH:
             if self.isBoss:
-                states.V_MOVE_COUNT += 1
+                Enemy.V_MOVE_COUNT += 1
             self.rect.right = SCREEN_WIDTH
             self.v_move = True
             self.h_move = False
