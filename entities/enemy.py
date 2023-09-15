@@ -36,7 +36,7 @@ class Enemy:
             self.y_change = Enemy.ENEMY_SPEED
             self.max_health = 100+(states.GAME_LEVEL-1)*10
             self.health = self.max_health
-        self.rect = self.enemy.get_rect(midbottom = (random.randint(0, SCREEN_WIDTH - self.width/2), 0))
+        self.rect = self.enemy.get_rect(midbottom = (random.randint(0, SCREEN_WIDTH - (self.width//2)), 0))
         self.start = self.rect.top
         self.h_move = False
         self.v_move = True
@@ -48,7 +48,7 @@ class Enemy:
         self.health_bar_time = sys.float_info.min
 
     def spawn(self, screen):
-            screen.blit(self.enemy, self.rect)
+        screen.blit(self.enemy, self.rect)
 
     def move(self):
         if self.v_move:
@@ -109,8 +109,8 @@ class Enemy:
                 enemies.remove(enemy)
 
     @staticmethod
-    def spawn_enemy(player, current_time, enemies):
-        if (Enemy.JUST_SPAWNED or (current_time - Enemy.LAST_SPAWN_TIME >= Enemy.SPAWN_DELAY)) and not (player.health <= 0 or current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY or states.PAUSE_STATE or states.WIN_STATE):
+    def spawn_enemy(current_time, enemies):
+        if (Enemy.JUST_SPAWNED or (current_time - Enemy.LAST_SPAWN_TIME >= Enemy.SPAWN_DELAY)) and not (states.GAME_OVER or current_time - states.LEVEL_BANNER_TIME <= states.LEVEL_DELAY or states.PAUSE_STATE or states.WIN_STATE):
             if Enemy.ENEMY_COUNT < 5*states.GAME_LEVEL:
                 enemy_spawn = Enemy(False)
                 enemies.append(enemy_spawn)

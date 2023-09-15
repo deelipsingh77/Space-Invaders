@@ -69,7 +69,7 @@ def run_game(screen):
         
         if not constants.MENU_STATE:
             Bullet.create_bullet(player, current_time, bullets)
-            Enemy.spawn_enemy(player, current_time, enemies) 
+            Enemy.spawn_enemy(current_time, enemies) 
 
             args = [screen, player, current_time]
             Enemy.update_defeated(screen, current_time, defeated)
